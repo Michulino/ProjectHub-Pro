@@ -1212,6 +1212,347 @@
         .shortcut-row span:first-child { color: var(--text-muted); }
 
         /* =================================================================
+           NUEVO v21: FILTROS MULTI-SELECT
+           ================================================================= */
+        /* Badge en el botón de filtro con la cantidad seleccionada */
+        .col-filter-btn {
+            position: relative;
+        }
+        .col-filter-btn .filter-count-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.62em;
+            font-weight: 700;
+            border-radius: 999px;
+            min-width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            line-height: 1;
+            box-shadow: 0 0 0 2px var(--bg-elev);
+        }
+
+        /* Footer con botones Aplicar / Limpiar */
+        .col-filter-footer {
+            display: flex;
+            gap: 6px;
+            padding: 8px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-muted);
+        }
+        .col-filter-footer .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 7px 10px;
+            font-size: 0.82em;
+        }
+        .col-filter-footer .btn svg { width: 13px; height: 13px; }
+
+        /* Header con título y "Marcar todos / Ninguno" */
+        .col-filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-muted);
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .col-filter-header .toggle-all {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .col-filter-header .toggle-all:hover {
+            background: var(--primary-light);
+        }
+
+        /* Check visual mejorado para multi-select (estilo checkbox) */
+        .col-filter-option .check {
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            transition: all 150ms ease;
+        }
+        .col-filter-option.selected .check {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .col-filter-option .check svg {
+            color: white;
+        }
+
+        /* Chip de filtro activo: ahora pueden ser múltiples por columna */
+        .active-filters .filter-chip + .filter-chip-same-col {
+            margin-left: -4px;
+        }
+
+        /* Pantalla de bloqueo */
+        .lock-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 200ms ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .lock-screen.hidden { display: none; }
+        .lock-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            animation: slideUpFade 400ms cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .lock-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        .lock-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+        .lock-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+        .lock-subtitle {
+            font-size: 0.92em;
+            color: #64748b;
+            margin-bottom: 26px;
+        }
+        .lock-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .lock-form input {
+            padding: 13px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 200ms ease;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        .lock-form input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+        .lock-form input.error {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 400ms;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .lock-form button {
+            padding: 13px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 200ms ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .lock-form button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.45);
+        }
+        .lock-form button:active {
+            transform: translateY(0);
+        }
+        .lock-error-msg {
+            color: #ef4444;
+            font-size: 0.88em;
+            font-weight: 600;
+            margin-top: 4px;
+            min-height: 18px;
+        }
+        .lock-footer {
+            margin-top: 24px;
+            font-size: 0.78em;
+            color: #94a3b8;
+        }
+
+        /* Modal de login con Google */
+        .auth-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-modal.hidden { display: none; }
+        .auth-card {
+            background: var(--bg-elev);
+            border-radius: 20px;
+            padding: 36px 32px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        .auth-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 14px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-icon svg { width: 30px; height: 30px; color: var(--primary); }
+        .auth-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .auth-subtitle {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+        .google-signin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: white;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            border-radius: 10px;
+            padding: 12px 22px;
+            font-size: 0.95em;
+            font-weight: 600;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 200ms ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            min-width: 240px;
+        }
+        .google-signin-btn:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #c0c4c8;
+        }
+        .google-signin-btn svg { width: 18px; height: 18px; }
+
+        .auth-error {
+            background: var(--danger-light);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88em;
+            text-align: left;
+            margin: 14px 0;
+            line-height: 1.5;
+        }
+        .auth-error strong { display: block; margin-bottom: 4px; }
+
+        /* Indicador de sesión en header */
+        .session-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 4px 10px 4px 4px;
+            border-radius: 999px;
+            font-size: 0.78em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 200ms ease;
+            backdrop-filter: blur(4px);
+        }
+        .session-chip:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+        .session-chip img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.45);
+        }
+        .session-chip .fallback-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        /* Estado read-only (cuando hay password pero NO login Google aún) */
+        body.readonly-mode .btn-primary,
+        body.readonly-mode .action-btn,
+        body.readonly-mode .col-filter-btn,
+        body.readonly-mode .task-status-select,
+        body.readonly-mode .responsable-chip {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* =================================================================
            NUEVO v20: GOOGLE DRIVE SYNC
            ================================================================= */
 
@@ -2620,6 +2961,11 @@
             background: transparent;
             border: none;
         }
+        .tasks-tab svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
         .tasks-tab:hover { color: var(--text); }
         .tasks-tab.active {
             background: var(--bg-elev);
@@ -3611,6 +3957,114 @@
                 width: 24px;
                 height: 24px;
             }
+
+            /* =====================================================
+               BUGFIX v21: Tamaño explícito a TODOS los SVG
+               (algunos SVG sin width/height se expandían al 100%
+                en móvil rompiendo el layout)
+               ===================================================== */
+            .tasks-tab svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+            .tab-count svg, .tab-count {
+                flex-shrink: 0;
+            }
+            .my-day-btn svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+            .view-toggle button svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+            /* Catch-all: cualquier SVG dentro de un botón en móvil
+               sin tamaño explícito queda razonable */
+            button svg, .btn svg, .col-filter-btn svg {
+                max-width: 22px;
+                max-height: 22px;
+            }
+
+            /* =====================================================
+               BUGFIX v21: Botones de acción en cards de tarea (mobile)
+               Antes flotaban arriba del card; ahora van en fila propia
+               ===================================================== */
+            #tasksTable td.task-actions-cell {
+                position: static !important;
+                top: auto !important;
+                right: auto !important;
+            }
+            .task-actions {
+                position: static !important;
+                top: auto !important;
+                right: auto !important;
+                opacity: 1 !important;
+                display: flex !important;
+                gap: 8px;
+                justify-content: flex-end;
+                padding-top: 8px;
+                margin-top: 8px;
+                border-top: 1px solid var(--border);
+                width: 100%;
+            }
+            .task-actions .action-btn {
+                width: 36px;
+                height: 36px;
+                flex-shrink: 0;
+            }
+            .task-actions .action-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* =====================================================
+               BUGFIX v21: "X" suelta del header clear filters
+               Ocultarla en móvil (ya hay un botón "Limpiar" en otra parte)
+               ===================================================== */
+            #headerClearFiltersBtn { display: none !important; }
+
+            /* =====================================================
+               BUGFIX v21: Toolbar más compacta y wrappeable
+               ===================================================== */
+            .toolbar {
+                gap: 6px;
+            }
+            .view-toggle {
+                flex-wrap: wrap;
+            }
+            .view-toggle button {
+                font-size: 0.82em;
+                padding: 6px 10px;
+            }
+            .my-day-btn {
+                font-size: 0.82em;
+                padding: 6px 10px;
+            }
+
+            /* =====================================================
+               BUGFIX v21: Tab Activas/Completadas más compactos
+               ===================================================== */
+            .tasks-tabs {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .tasks-tab {
+                font-size: 0.82em;
+                padding: 5px 10px;
+            }
+
+            /* =====================================================
+               BUGFIX v21: Insights row — los widgets no deben tener
+               SVGs gigantes
+               ===================================================== */
+            .insights-row h3 svg {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
         }
 
         /* ───────── MÓVIL PEQUEÑO (≤479px) ───────── */
@@ -3675,7 +4129,61 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- ============ PASSWORD GATE (Pantalla de bloqueo) ============ -->
+    <div id="lockScreen" class="lock-screen">
+        <div class="lock-card">
+            <div class="lock-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <div class="lock-title">ProjectHub Pro</div>
+            <div class="lock-subtitle">Esta aplicación es privada.<br>Ingresa la contraseña para continuar.</div>
+            <form id="lockForm" class="lock-form" onsubmit="checkLockPassword(event)" autocomplete="off">
+                <input type="password" id="lockPasswordInput" placeholder="Contraseña" autocomplete="current-password" autofocus>
+                <button type="submit">
+                    Desbloquear
+                </button>
+                <div class="lock-error-msg" id="lockErrorMsg"></div>
+            </form>
+            <div class="lock-footer">
+                🔒 Tu sesión se recordará por 30 días en este dispositivo
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ AUTH GATE (Login con Google + Whitelist) ============ -->
+    <div id="authModal" class="auth-modal hidden">
+        <div class="auth-card">
+            <div class="auth-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            <div class="auth-title" id="authTitle">Inicia sesión</div>
+            <div class="auth-subtitle" id="authSubtitle">
+                Conecta tu cuenta de Google para usar la app.<br>
+                Solo cuentas autorizadas pueden acceder.
+            </div>
+            <div id="authError" class="auth-error" style="display:none;"></div>
+            <button class="google-signin-btn" id="googleSignInBtn" onclick="initiateGoogleLogin()">
+                <svg viewBox="0 0 18 18">
+                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+                    <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.836.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+                    <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+                    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.167 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                </svg>
+                Iniciar sesión con Google
+            </button>
+            <button id="lockBackBtn" class="btn btn-ghost" onclick="lockAgain()" style="margin-top: 14px; font-size: 0.82em;">
+                Cerrar sesión y bloquear
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="appContainer" style="display: none;">
         <!-- ============ HEADER ============ -->
         <header class="app-header">
             <div class="user-avatar" id="userAvatar" onclick="openConfigModal()" title="Cambiar foto en Configuración" role="button" tabindex="0" aria-label="Avatar de usuario"></div>
@@ -3692,6 +4200,10 @@
                 <div class="clock-date" id="clockDate">—</div>
             </div>
             <div class="app-header-actions">
+                <button class="session-chip" id="sessionChip" onclick="showSessionMenu()" title="Tu sesión" style="display:none;">
+                    <span class="fallback-avatar" id="sessionAvatarFallback">?</span>
+                    <span id="sessionName">—</span>
+                </button>
                 <button class="drive-sync-indicator status-disconnected" id="driveSyncIndicator" onclick="openConfigModal(); setTimeout(() => document.getElementById('driveSyncCard')?.scrollIntoView({behavior:'smooth'}), 200);" title="Sincronización con Google Drive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="driveSyncIcon"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span id="driveSyncLabel">Sin Drive</span>
@@ -4538,7 +5050,7 @@
         templates: [],
         config: { title: '🎯 ProjectHub Pro', subtitle: 'Gestión inteligente de tareas y proyectos' },
         user: { name: 'Cristian', avatar: null },
-        filters: { search: '', proyecto: '', responsable: '', prioridad: '', estado: '', revision: '' },
+        filters: { search: '', proyecto: [], responsable: [], prioridad: [], estado: [], revision: [] },
         sort: { field: 'id', dir: 'asc' },
         view: 'table',
         taskTab: 'active', // 'active' | 'completed'
@@ -4757,8 +5269,8 @@
         if (state.projects.includes(currentForm)) formSel.value = currentForm;
 
         // Si el filtro de proyecto activo referencia un proyecto que ya no existe → limpiarlo
-        if (state.filters.proyecto && !state.projects.includes(state.filters.proyecto)) {
-            state.filters.proyecto = '';
+        if (Array.isArray(state.filters.proyecto)) {
+            state.filters.proyecto = state.filters.proyecto.filter(p => state.projects.includes(p));
         }
 
         renderProjectsList();
@@ -4897,22 +5409,26 @@
             // Mención: si hay @persona en el search, filtrar por ese responsable
             if (mentionedMemberId && t.responsable !== mentionedMemberId) return false;
 
-            if (state.filters.proyecto && t.proyecto !== state.filters.proyecto) return false;
-            if (state.filters.prioridad && t.prioridad !== state.filters.prioridad) return false;
-            if (state.filters.estado && t.estado !== state.filters.estado) return false;
-            if (state.filters.responsable) {
-                if (state.filters.responsable === '__unassigned__') {
-                    if (t.responsable) return false;
-                } else if (t.responsable !== state.filters.responsable) {
-                    return false;
-                }
+            if (state.filters.proyecto.length > 0 && !state.filters.proyecto.includes(t.proyecto)) return false;
+            if (state.filters.prioridad.length > 0 && !state.filters.prioridad.includes(t.prioridad)) return false;
+            if (state.filters.estado.length > 0 && !state.filters.estado.includes(t.estado)) return false;
+            if (state.filters.responsable.length > 0) {
+                // Caso especial: '__unassigned__' significa "sin asignar"
+                const matchUnassigned = state.filters.responsable.includes('__unassigned__') && !t.responsable;
+                const matchMember = t.responsable && state.filters.responsable.includes(t.responsable);
+                if (!matchUnassigned && !matchMember) return false;
             }
-            if (state.filters.revision) {
+            if (state.filters.revision.length > 0) {
                 const status = reviewStatus(t);
-                if (state.filters.revision === 'today' && status !== 'today') return false;
-                if (state.filters.revision === 'pending' && status === 'today') return false;
-                if (state.filters.revision === 'stale' && status !== 'stale') return false;
-                if (state.filters.revision === 'never' && status !== 'never') return false;
+                // Mapeo: 'today' → revisada hoy; 'pending' → no hoy; 'stale' → más de 7 días; 'never' → nunca
+                const passes = state.filters.revision.some(rev => {
+                    if (rev === 'today') return status === 'today';
+                    if (rev === 'pending') return status !== 'today';
+                    if (rev === 'stale') return status === 'stale';
+                    if (rev === 'never') return status === 'never';
+                    return false;
+                });
+                if (!passes) return false;
             }
             if (q) {
                 const memberName = getMember(t.responsable)?.nombre || '';
@@ -4962,22 +5478,29 @@
     function clearFilters() {
         $('#searchInput').value = '';
         state.filters.search = '';
-        state.filters.proyecto = '';
-        state.filters.responsable = '';
-        state.filters.prioridad = '';
-        state.filters.estado = '';
-        state.filters.revision = '';
+        state.filters.proyecto = [];
+        state.filters.responsable = [];
+        state.filters.prioridad = [];
+        state.filters.estado = [];
+        state.filters.revision = [];
         updateFilterVisuals();
         renderTasks();
     }
 
-    /* Quitar UN filtro específico (desde un chip) */
-    function removeFilter(filterName) {
+    /* Quitar UN filtro: si se pasa solo el nombre, limpia todo el array.
+       Si se pasa nombre + valor específico, solo quita ese valor del array. */
+    function removeFilter(filterName, specificValue = null) {
         if (filterName === 'search') {
             $('#searchInput').value = '';
             state.filters.search = '';
         } else if (state.filters.hasOwnProperty(filterName)) {
-            state.filters[filterName] = '';
+            if (specificValue !== null && Array.isArray(state.filters[filterName])) {
+                state.filters[filterName] = state.filters[filterName].filter(v => v !== specificValue);
+            } else if (Array.isArray(state.filters[filterName])) {
+                state.filters[filterName] = [];
+            } else {
+                state.filters[filterName] = '';
+            }
         }
         updateFilterVisuals();
         renderTasks();
@@ -4986,17 +5509,28 @@
     /* Actualiza visuales (chips + botones de filtro en headers + botón "Limpiar") */
     function updateFilterVisuals() {
         const activeMap = {
-            proyecto: !!state.filters.proyecto,
-            responsable: !!state.filters.responsable,
-            prioridad: !!state.filters.prioridad,
-            estado: !!state.filters.estado,
-            revision: !!state.filters.revision
+            proyecto: state.filters.proyecto.length > 0,
+            responsable: state.filters.responsable.length > 0,
+            prioridad: state.filters.prioridad.length > 0,
+            estado: state.filters.estado.length > 0,
+            revision: state.filters.revision.length > 0
         };
 
-        // Marcar como activos los botones de filtro en los headers
+        // Marcar como activos los botones de filtro en los headers + agregar badge con conteo
         document.querySelectorAll('.col-filter-btn').forEach(btn => {
             const f = btn.dataset.filter;
+            const count = Array.isArray(state.filters[f]) ? state.filters[f].length : 0;
             btn.classList.toggle('active', !!activeMap[f]);
+            // Remover badge anterior
+            const oldBadge = btn.querySelector('.filter-count-badge');
+            if (oldBadge) oldBadge.remove();
+            // Agregar badge si hay 2+ valores seleccionados
+            if (count >= 2) {
+                const badge = document.createElement('span');
+                badge.className = 'filter-count-badge';
+                badge.textContent = count;
+                btn.appendChild(badge);
+            }
         });
 
         // Marcar campo de búsqueda como activo si tiene texto
@@ -5004,8 +5538,14 @@
         if (state.filters.search.trim()) searchEl.classList.add('active');
         else searchEl.classList.remove('active');
 
-        // Contar filtros activos
-        const activeCount = Object.values(activeMap).filter(Boolean).length + (state.filters.search.trim() ? 1 : 0);
+        // Contar filtros activos (suma de valores en todos los arrays)
+        const activeCount =
+            (state.filters.proyecto.length) +
+            (state.filters.responsable.length) +
+            (state.filters.prioridad.length) +
+            (state.filters.estado.length) +
+            (state.filters.revision.length) +
+            (state.filters.search.trim() ? 1 : 0);
 
         // Botón "Limpiar filtros"
         const clearBtn = $('#clearFiltersBtn');
@@ -5039,44 +5579,44 @@
         const container = $('#activeFiltersChips');
         const chips = [];
 
-        // Helper para crear chip
-        const chip = (type, label, filterName) => `
+        // Helper para crear chip multi-select: incluye filterName Y specificValue
+        const chip = (type, label, filterName, specificValue) => `
             <span class="filter-chip">
                 <span class="chip-type">${escapeHTML(type)}:</span>
                 <span>${escapeHTML(label)}</span>
-                <button class="chip-remove" onclick="removeFilter('${filterName}')" aria-label="Quitar filtro ${escapeHTML(type)}">
+                <button class="chip-remove" onclick="removeFilter('${filterName}', ${specificValue === null ? 'null' : `'${escapeHTML(String(specificValue))}'`})" aria-label="Quitar filtro ${escapeHTML(type)}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
             </span>
         `;
 
         if (state.filters.search.trim()) {
-            chips.push(chip('Búsqueda', `"${state.filters.search.trim()}"`, 'search'));
+            chips.push(chip('Búsqueda', `"${state.filters.search.trim()}"`, 'search', null));
         }
-        if (state.filters.proyecto) {
-            chips.push(chip('Proyecto', state.filters.proyecto, 'proyecto'));
-        }
-        if (state.filters.responsable) {
+        state.filters.proyecto.forEach(p => {
+            chips.push(chip('Proyecto', p, 'proyecto', p));
+        });
+        state.filters.responsable.forEach(rId => {
             let label;
-            if (state.filters.responsable === '__unassigned__') label = 'Sin asignar';
-            else label = getMember(state.filters.responsable)?.nombre || state.filters.responsable;
-            chips.push(chip('Responsable', label, 'responsable'));
-        }
-        if (state.filters.prioridad) {
-            chips.push(chip('Prioridad', state.filters.prioridad, 'prioridad'));
-        }
-        if (state.filters.estado) {
-            chips.push(chip('Estado', state.filters.estado, 'estado'));
-        }
-        if (state.filters.revision) {
-            const map = {
-                today: '✓ Revisadas hoy',
-                pending: '⏰ Pendientes de revisar',
-                stale: '⚠ Sin revisar +7d',
-                never: '∅ Nunca revisadas'
-            };
-            chips.push(chip('Revisión', map[state.filters.revision] || state.filters.revision, 'revision'));
-        }
+            if (rId === '__unassigned__') label = 'Sin asignar';
+            else label = getMember(rId)?.nombre || rId;
+            chips.push(chip('Responsable', label, 'responsable', rId));
+        });
+        state.filters.prioridad.forEach(p => {
+            chips.push(chip('Prioridad', p, 'prioridad', p));
+        });
+        state.filters.estado.forEach(e => {
+            chips.push(chip('Estado', e, 'estado', e));
+        });
+        const revMap = {
+            today: '✓ Revisadas hoy',
+            pending: '⏰ Pendientes de revisar',
+            stale: '⚠ Sin revisar +7d',
+            never: '∅ Nunca revisadas'
+        };
+        state.filters.revision.forEach(r => {
+            chips.push(chip('Revisión', revMap[r] || r, 'revision', r));
+        });
 
         if (chips.length === 0) {
             bar.classList.add('hidden');
@@ -6227,10 +6767,11 @@
 
     /* Filtros */
     function updateResponsableFilter() {
-        // Si el responsable filtrado ya no existe → limpiar
-        if (state.filters.responsable && state.filters.responsable !== '__unassigned__' &&
-            !state.team.some(m => m.id === state.filters.responsable)) {
-            state.filters.responsable = '';
+        // Si algún ID en el filtro de responsable ya no existe → quitarlo
+        if (Array.isArray(state.filters.responsable)) {
+            state.filters.responsable = state.filters.responsable.filter(id =>
+                id === '__unassigned__' || state.team.some(m => m.id === id)
+            );
         }
     }
 
@@ -6510,30 +7051,51 @@
         dropdown.dataset.filterKey = filterKey;
 
         const options = getColumnFilterOptions(filterKey);
-        const currentVal = state.filters[filterKey];
+        // Cuenta cuántos están actualmente seleccionados (estado del filtro al abrir)
+        const currentArray = Array.isArray(state.filters[filterKey])
+            ? [...state.filters[filterKey]]
+            : (state.filters[filterKey] ? [state.filters[filterKey]] : []);
+
+        // Estado temporal de selección dentro del dropdown
+        // (no se aplica al state global hasta hacer click en "Aplicar")
+        const tempSelection = new Set(currentArray);
 
         // Solo mostrar buscador si hay 6+ opciones
         const showSearch = options.length >= 6;
 
+        const titleMap = {
+            proyecto: 'Filtrar por proyecto',
+            responsable: 'Filtrar por responsable',
+            prioridad: 'Filtrar por prioridad',
+            estado: 'Filtrar por estado',
+            revision: 'Filtrar por revisión'
+        };
+
         dropdown.innerHTML = `
+            <div class="col-filter-header">
+                <span>${escapeHTML(titleMap[filterKey] || 'Filtrar')}</span>
+                <button class="toggle-all" data-action="toggle-all">Todos</button>
+            </div>
             ${showSearch ? `<input type="text" class="col-filter-search" placeholder="Buscar..." aria-label="Buscar opción">` : ''}
             <div class="col-filter-options">
                 ${options.length === 0 ? '<div class="col-filter-empty">Sin opciones disponibles</div>' : options.map(o => `
-                    <div class="col-filter-option ${o.value === currentVal ? 'selected' : ''}" data-value="${escapeHTML(o.value)}">
+                    <div class="col-filter-option ${tempSelection.has(o.value) ? 'selected' : ''}" data-value="${escapeHTML(o.value)}">
                         <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
                         <span class="option-label" ${o.italic ? 'style="font-style: italic; color: var(--text-soft);"' : ''}>${o.icon ? o.icon + ' ' : ''}${escapeHTML(o.label)}${o.color ? ` <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${o.color}; margin-left: 4px; vertical-align: middle;"></span>` : ''}</span>
                         <span class="option-count">${o.count}</span>
                     </div>
                 `).join('')}
             </div>
-            ${currentVal ? `
-                <div class="col-filter-footer">
-                    <button class="btn btn-ghost" data-action="clear">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                        Limpiar filtro
-                    </button>
-                </div>
-            ` : ''}
+            <div class="col-filter-footer">
+                <button class="btn btn-ghost" data-action="clear">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    Limpiar
+                </button>
+                <button class="btn btn-primary" data-action="apply">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Aplicar
+                </button>
+            </div>
         `;
 
         document.body.appendChild(dropdown);
@@ -6543,11 +7105,9 @@
         const ddRect = dropdown.getBoundingClientRect();
         let top = rect.bottom + 6;
         let left = rect.left;
-        // Si se sale por la derecha, ajustar
         if (left + ddRect.width > window.innerWidth - 10) {
             left = window.innerWidth - ddRect.width - 10;
         }
-        // Si se sale por abajo, mostrarlo arriba
         if (top + ddRect.height > window.innerHeight - 10) {
             top = rect.top - ddRect.height - 6;
         }
@@ -6558,22 +7118,72 @@
         requestAnimationFrame(() => dropdown.classList.add('show'));
         openFilterDropdown = dropdown;
 
-        // Eventos
+        // Helper: refrescar visualmente el estado de "Todos / Ninguno"
+        function updateToggleAllLabel() {
+            const totalOpts = dropdown.querySelectorAll('.col-filter-option').length;
+            const btn = dropdown.querySelector('[data-action="toggle-all"]');
+            if (!btn) return;
+            btn.textContent = tempSelection.size === totalOpts && totalOpts > 0 ? 'Ninguno' : 'Todos';
+        }
+        updateToggleAllLabel();
+
+        // Click en una opción → toggle en tempSelection (sin aplicar todavía)
         dropdown.querySelectorAll('.col-filter-option').forEach(opt => {
-            opt.onclick = () => {
+            opt.onclick = (e) => {
+                e.stopPropagation();
                 const val = opt.dataset.value;
-                // Toggle: si ya está seleccionado → quitar; sino → setear
-                state.filters[filterKey] = (state.filters[filterKey] === val) ? '' : val;
+                if (tempSelection.has(val)) {
+                    tempSelection.delete(val);
+                    opt.classList.remove('selected');
+                } else {
+                    tempSelection.add(val);
+                    opt.classList.add('selected');
+                }
+                updateToggleAllLabel();
+            };
+        });
+
+        // Toggle "Todos / Ninguno"
+        const toggleAllBtn = dropdown.querySelector('[data-action="toggle-all"]');
+        if (toggleAllBtn) {
+            toggleAllBtn.onclick = (e) => {
+                e.stopPropagation();
+                const allOpts = dropdown.querySelectorAll('.col-filter-option');
+                if (tempSelection.size === allOpts.length) {
+                    // Todos seleccionados → desmarcar todos
+                    tempSelection.clear();
+                    allOpts.forEach(o => o.classList.remove('selected'));
+                } else {
+                    // No todos → marcar todos los VISIBLES
+                    allOpts.forEach(o => {
+                        if (o.style.display !== 'none') {
+                            tempSelection.add(o.dataset.value);
+                            o.classList.add('selected');
+                        }
+                    });
+                }
+                updateToggleAllLabel();
+            };
+        }
+
+        // Botón "Aplicar"
+        const applyBtn = dropdown.querySelector('[data-action="apply"]');
+        if (applyBtn) {
+            applyBtn.onclick = (e) => {
+                e.stopPropagation();
+                state.filters[filterKey] = Array.from(tempSelection);
                 closeColFilter();
                 updateFilterVisuals();
                 renderTasks();
             };
-        });
+        }
 
+        // Botón "Limpiar"
         const clearBtn = dropdown.querySelector('[data-action="clear"]');
         if (clearBtn) {
-            clearBtn.onclick = () => {
-                state.filters[filterKey] = '';
+            clearBtn.onclick = (e) => {
+                e.stopPropagation();
+                state.filters[filterKey] = [];
                 closeColFilter();
                 updateFilterVisuals();
                 renderTasks();
@@ -6592,6 +7202,14 @@
             });
             setTimeout(() => searchInput.focus(), 50);
         }
+
+        // Enter dentro del dropdown = Aplicar
+        dropdown.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyBtn.click();
+            }
+        });
     }
 
     function closeColFilter() {
@@ -7805,6 +8423,316 @@
     }
 
     /* ===================================================================
+       NUEVO v21: AUTENTICACIÓN (Password Gate + Google Login Whitelist)
+       =================================================================== */
+
+    // SHA-256 de "Mianmarba1988#"
+    const APP_PASSWORD_HASH = 'a7c5ff63c620085c275401f9887868ea1a006fe4f39979e10443224dc6135f57';
+
+    // Lista de correos autorizados para usar la app
+    const AUTHORIZED_EMAILS = [
+        'miguelmartinez.job@gmail.com',
+        'miamartinezba@unal.edu.co'
+    ];
+
+    // Duración del "recuérdame" en milisegundos (30 días)
+    const PASSWORD_REMEMBER_MS = 30 * 24 * 60 * 60 * 1000;
+
+    const auth = {
+        passwordOk: false,
+        googleOk: false,
+        userEmail: null,
+        userName: null,
+        userPicture: null,
+        idToken: null,
+        gsiReady: false
+    };
+
+    /* === SHA-256 helper (Web Crypto API nativa) === */
+    async function sha256(str) {
+        const buf = new TextEncoder().encode(str);
+        const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(hashBuf))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    }
+
+    /* === Password gate === */
+    function isPasswordTokenValid() {
+        try {
+            const raw = localStorage.getItem('projecthub_lock_token');
+            if (!raw) return false;
+            const data = JSON.parse(raw);
+            if (!data.hash || !data.expiresAt) return false;
+            if (data.hash !== APP_PASSWORD_HASH) return false;
+            if (Date.now() > data.expiresAt) return false;
+            return true;
+        } catch { return false; }
+    }
+
+    async function checkLockPassword(event) {
+        event.preventDefault();
+        const input = document.getElementById('lockPasswordInput');
+        const errorMsg = document.getElementById('lockErrorMsg');
+        const enteredPwd = input.value;
+        if (!enteredPwd) {
+            errorMsg.textContent = 'Ingresa la contraseña';
+            input.classList.add('error');
+            setTimeout(() => input.classList.remove('error'), 500);
+            return;
+        }
+        const enteredHash = await sha256(enteredPwd);
+        if (enteredHash === APP_PASSWORD_HASH) {
+            // Contraseña correcta — guardar token y proceder al login Google
+            localStorage.setItem('projecthub_lock_token', JSON.stringify({
+                hash: APP_PASSWORD_HASH,
+                expiresAt: Date.now() + PASSWORD_REMEMBER_MS
+            }));
+            auth.passwordOk = true;
+            errorMsg.textContent = '';
+            input.value = '';
+            hideLockScreen();
+            showAuthGate();
+        } else {
+            errorMsg.textContent = '❌ Contraseña incorrecta';
+            input.classList.add('error');
+            setTimeout(() => input.classList.remove('error'), 500);
+            input.select();
+        }
+    }
+
+    function hideLockScreen() {
+        document.getElementById('lockScreen').classList.add('hidden');
+    }
+
+    function showLockScreen() {
+        document.getElementById('lockScreen').classList.remove('hidden');
+        document.getElementById('appContainer').style.display = 'none';
+        document.getElementById('authModal').classList.add('hidden');
+        setTimeout(() => {
+            const inp = document.getElementById('lockPasswordInput');
+            if (inp) inp.focus();
+        }, 100);
+    }
+
+    /* === Login con Google (whitelist) === */
+    function showAuthGate() {
+        // Si ya tiene sesión Google válida, omitir
+        const storedGoogle = readStoredGoogleSession();
+        if (storedGoogle && AUTHORIZED_EMAILS.includes(storedGoogle.email.toLowerCase())) {
+            auth.userEmail = storedGoogle.email;
+            auth.userName = storedGoogle.name;
+            auth.userPicture = storedGoogle.picture;
+            auth.googleOk = true;
+            enterApp();
+            return;
+        }
+        // Mostrar modal de login
+        document.getElementById('authModal').classList.remove('hidden');
+        document.getElementById('authError').style.display = 'none';
+    }
+
+    function readStoredGoogleSession() {
+        try {
+            const raw = localStorage.getItem('projecthub_google_session');
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            // Sesión Google se considera válida si tiene email; sin expiración (Google maneja eso al refrescar)
+            if (data.email) return data;
+            return null;
+        } catch { return null; }
+    }
+
+    function saveGoogleSession(profile) {
+        localStorage.setItem('projecthub_google_session', JSON.stringify({
+            email: profile.email,
+            name: profile.name,
+            picture: profile.picture,
+            loggedAt: Date.now()
+        }));
+    }
+
+    function initiateGoogleLogin() {
+        // Esperar a que GIS cargue (puede no estar listo aún)
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+            showAuthError('Cargando Google… espera unos segundos y vuelve a intentar.');
+            return;
+        }
+        // Configurar callback de Sign-In con ID token
+        google.accounts.id.initialize({
+            client_id: '801442759779-k8ocj95dpt6tuc15ootelnumie9p3t8c.apps.googleusercontent.com',
+            callback: handleGoogleCredentialResponse,
+            auto_select: false,
+            cancel_on_tap_outside: false
+        });
+        // Forzar prompt
+        google.accounts.id.prompt((notification) => {
+            // Si el prompt no se muestra (One Tap), abrir popup tradicional como fallback
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                // Fallback: usar oauth2 con popup
+                fallbackGoogleSignIn();
+            }
+        });
+    }
+
+    /* Fallback: usar OAuth2 popup que sí pide credenciales explícitamente */
+    function fallbackGoogleSignIn() {
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: '801442759779-k8ocj95dpt6tuc15ootelnumie9p3t8c.apps.googleusercontent.com',
+            scope: 'openid email profile',
+            callback: async (response) => {
+                if (response.error) {
+                    showAuthError('No se pudo iniciar sesión: ' + (response.error_description || response.error));
+                    return;
+                }
+                // Tenemos access_token. Pedir info del usuario al userinfo endpoint
+                try {
+                    const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                        headers: { 'Authorization': `Bearer ${response.access_token}` }
+                    });
+                    if (!resp.ok) throw new Error('No se pudo obtener perfil');
+                    const profile = await resp.json();
+                    verifyAndLogIn(profile);
+                } catch (e) {
+                    showAuthError('Error obteniendo perfil: ' + e.message);
+                }
+            }
+        });
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+    }
+
+    /* Callback del flujo de Google ID Token */
+    function handleGoogleCredentialResponse(response) {
+        try {
+            const payload = parseJwt(response.credential);
+            const profile = {
+                email: payload.email,
+                name: payload.name,
+                picture: payload.picture
+            };
+            verifyAndLogIn(profile);
+        } catch (e) {
+            showAuthError('Token inválido: ' + e.message);
+        }
+    }
+
+    function parseJwt(token) {
+        const parts = token.split('.');
+        if (parts.length !== 3) throw new Error('JWT inválido');
+        const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const padded = payload + '==='.slice((payload.length + 3) % 4);
+        return JSON.parse(atob(padded));
+    }
+
+    function verifyAndLogIn(profile) {
+        const email = (profile.email || '').toLowerCase().trim();
+        if (!AUTHORIZED_EMAILS.includes(email)) {
+            // NO autorizado
+            showAuthError(
+                '<strong>Acceso denegado</strong>' +
+                `La cuenta <code>${escapeHTML(profile.email)}</code> no está autorizada para usar esta aplicación.<br>` +
+                'Si crees que esto es un error, contacta al administrador.'
+            );
+            return;
+        }
+        // Sí autorizado — guardar sesión y entrar
+        auth.userEmail = profile.email;
+        auth.userName = profile.name || profile.email;
+        auth.userPicture = profile.picture || null;
+        auth.googleOk = true;
+        saveGoogleSession(profile);
+        document.getElementById('authModal').classList.add('hidden');
+        enterApp();
+    }
+
+    function showAuthError(htmlMsg) {
+        const errBox = document.getElementById('authError');
+        errBox.innerHTML = htmlMsg;
+        errBox.style.display = 'block';
+    }
+
+    /* === Cerrar sesión / bloquear === */
+    function lockAgain() {
+        if (!confirm('¿Cerrar sesión y bloquear la aplicación? Tendrás que ingresar la contraseña otra vez.')) return;
+        localStorage.removeItem('projecthub_lock_token');
+        localStorage.removeItem('projecthub_google_session');
+        auth.passwordOk = false;
+        auth.googleOk = false;
+        auth.userEmail = null;
+        location.reload();
+    }
+
+    function signOutGoogle() {
+        if (!confirm('¿Cerrar sesión de Google? La contraseña seguirá vigente.')) return;
+        localStorage.removeItem('projecthub_google_session');
+        auth.googleOk = false;
+        auth.userEmail = null;
+        auth.userName = null;
+        auth.userPicture = null;
+        location.reload();
+    }
+
+    function showSessionMenu() {
+        // Menú simple usando confirm: cerrar sesión Google o bloquear todo
+        const opt = prompt(
+            `Sesión actual: ${auth.userName} (${auth.userEmail})\n\n` +
+            '1 = Cerrar sesión de Google (mantener contraseña)\n' +
+            '2 = Bloquear todo (cerrar sesión + pedir contraseña otra vez)\n' +
+            '\nEscribe 1 o 2:'
+        );
+        if (opt === '1') signOutGoogle();
+        else if (opt === '2') lockAgain();
+    }
+
+    function updateSessionChip() {
+        const chip = document.getElementById('sessionChip');
+        if (!chip) return;
+        if (auth.googleOk && auth.userEmail) {
+            chip.style.display = 'inline-flex';
+            const avatarFb = document.getElementById('sessionAvatarFallback');
+            const nameEl = document.getElementById('sessionName');
+            const initials = (auth.userName || auth.userEmail)
+                .split(/\s+/)
+                .slice(0, 2)
+                .map(s => s[0])
+                .join('')
+                .toUpperCase();
+            // Renderizar avatar
+            chip.innerHTML = (auth.userPicture
+                ? `<img src="${auth.userPicture}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                   <span class="fallback-avatar" style="display:none;">${escapeHTML(initials)}</span>`
+                : `<span class="fallback-avatar">${escapeHTML(initials)}</span>`
+            ) + `<span>${escapeHTML((auth.userName || auth.userEmail).split('@')[0])}</span>`;
+        } else {
+            chip.style.display = 'none';
+        }
+    }
+
+    /* === Entrar a la app (después de password + Google OK) === */
+    function enterApp() {
+        document.getElementById('appContainer').style.display = '';
+        updateSessionChip();
+        // Esperar a que init() haya corrido al menos una vez
+        if (!window.__appInitialized) {
+            window.__appInitialized = true;
+            init();
+        }
+    }
+
+    /* === Bootstrap inicial: decide qué pantalla mostrar === */
+    function authBootstrap() {
+        // 1. ¿Password OK?
+        if (!isPasswordTokenValid()) {
+            showLockScreen();
+            return;
+        }
+        auth.passwordOk = true;
+        document.getElementById('lockScreen').classList.add('hidden');
+        // 2. ¿Google OK?
+        showAuthGate();
+    }
+
+    /* ===================================================================
        NUEVO v20: GOOGLE DRIVE SYNC
        =================================================================== */
     const DRIVE_FILE_NAME = 'projecthub-sync.json';
@@ -8527,13 +9455,16 @@
         completeMention,
         // v20 — Drive sync
         saveDriveClientId, driveConnect, driveDisconnect, driveSyncNow,
-        drivePullFromCloud, driveResolveConflict, closeDriveConflictModal
+        drivePullFromCloud, driveResolveConflict, closeDriveConflictModal,
+        // v21 — auth
+        checkLockPassword, initiateGoogleLogin, signOutGoogle, lockAgain, showSessionMenu
     });
 
-    // Inicializar Drive SDK después de cargar todo
+    // Inicializar Drive SDK (no abre nada todavía)
     initDriveSDK();
 
-    init();
+    // Bootstrap: decidir si mostrar lock screen, login o app
+    authBootstrap();
     </script>
 </body>
 </html>
