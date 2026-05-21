@@ -1223,6 +1223,148 @@
 
         .shortcut-row span:first-child { color: var(--text-muted); }
 
+        /* v24+: Gráfico de performance de hábitos */
+        .habits-performance-card {
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .habits-performance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .habits-performance-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .habits-chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+        }
+        .habits-chart-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .habits-chart-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-soft);
+            font-size: 0.9em;
+            text-align: center;
+            padding: 20px;
+        }
+        .habits-chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .habits-chart-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82em;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: opacity 150ms ease;
+        }
+        .habits-chart-legend-item:hover { opacity: 0.7; }
+        .habits-chart-legend-item.dimmed {
+            opacity: 0.35;
+        }
+        .habits-chart-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .habits-chart-legend-color.line-only {
+            height: 2px;
+        }
+        .habits-chart-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .habits-chart-stat {
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .habits-chart-stat .stat-emoji {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .habits-chart-stat .stat-body {
+            min-width: 0;
+            flex: 1;
+        }
+        .habits-chart-stat .stat-value {
+            font-weight: 700;
+            font-size: 0.96em;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .habits-chart-stat .stat-label {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Tooltip del chart */
+        .habits-chart-tooltip {
+            position: absolute;
+            background: var(--text);
+            color: var(--bg-elev);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.78em;
+            font-weight: 600;
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 150ms ease;
+            transform: translate(-50%, -120%);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .habits-chart-tooltip.show { opacity: 1; }
+        .habits-chart-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--text);
+        }
+
+        @media (max-width: 767px) {
+            .habits-chart-container { height: 220px; }
+            .habits-performance-header { flex-direction: column; }
+            .habits-performance-controls { width: 100%; }
+            .habits-performance-controls select { flex: 1; }
+        }
+
         /* =================================================================
            NUEVO v24: MÓDULO DE HÁBITOS (Atomic Habits)
            ================================================================= */
@@ -5407,6 +5549,36 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Informe
                 </button>
+            </div>
+
+            <!-- v24+: Gráfico de performance de hábitos -->
+            <div class="habits-performance-card">
+                <div class="habits-performance-header">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.05em; display: flex; align-items: center; gap: 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--primary);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            Progreso de cumplimiento
+                        </h3>
+                        <p style="margin: 4px 0 0 0; font-size: 0.82em; color: var(--text-muted);">% de adherencia diaria por hábito</p>
+                    </div>
+                    <div class="habits-performance-controls">
+                        <select id="chartPeriod" onchange="renderHabitsChart()" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); font-size: 0.85em;">
+                            <option value="7">Últimos 7 días</option>
+                            <option value="30" selected>Últimos 30 días</option>
+                            <option value="90">Últimos 3 meses</option>
+                            <option value="180">Últimos 6 meses</option>
+                            <option value="365">Último año</option>
+                        </select>
+                        <select id="chartHabitFilter" onchange="renderHabitsChart()" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); font-size: 0.85em;">
+                            <option value="all">Todos los hábitos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="habits-chart-container" id="habitsChartContainer">
+                    <!-- SVG generado dinámicamente -->
+                </div>
+                <div class="habits-chart-legend" id="habitsChartLegend"></div>
+                <div class="habits-chart-summary" id="habitsChartSummary"></div>
             </div>
 
             <!-- Grid de hábitos -->
@@ -9885,15 +10057,15 @@
 
     /* === Bootstrap inicial: decide qué pantalla mostrar === */
     function authBootstrap() {
-        // === MODO PREVIEW: bypass de auth para ver la app sin login ===
+        // 1. ¿Password OK?
+        if (!isPasswordTokenValid()) {
+            showLockScreen();
+            return;
+        }
         auth.passwordOk = true;
-        auth.googleOk = true;
-        auth.userEmail = 'preview@local';
-        auth.userName = 'Vista Previa';
         document.getElementById('lockScreen').classList.add('hidden');
-        document.getElementById('authModal').classList.remove('show');
-        enterApp();
-        return;
+        // 2. ¿Google OK?
+        showAuthGate();
     }
 
     /* ===================================================================
@@ -11054,6 +11226,315 @@
         };
     }
 
+    /* === v24+: Gráfico de performance de hábitos === */
+    const CHART_COLORS = [
+        '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+        '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
+        '#f97316', '#14b8a6', '#a855f7', '#eab308'
+    ];
+
+    // Estado del chart (qué líneas están visibles)
+    const chartState = {
+        hiddenHabits: new Set(), // IDs de hábitos ocultos
+        hideAverage: false
+    };
+
+    function renderHabitsChart() {
+        const container = $('#habitsChartContainer');
+        const legendEl = $('#habitsChartLegend');
+        const summaryEl = $('#habitsChartSummary');
+        const periodEl = $('#chartPeriod');
+        const habitFilterEl = $('#chartHabitFilter');
+
+        const period = parseInt(periodEl.value, 10);
+        const selectedHabitId = habitFilterEl.value;
+
+        // Llenar el dropdown de hábitos si está vacío o desactualizado
+        const activeHabits = state.habits.filter(h => !h.archived);
+        if (habitFilterEl.children.length !== activeHabits.length + 1) {
+            habitFilterEl.innerHTML = '<option value="all">Todos los hábitos</option>' +
+                activeHabits.map(h => `<option value="${h.id}">${escapeHTML(h.emoji)} ${escapeHTML(h.name)}</option>`).join('');
+            habitFilterEl.value = selectedHabitId === 'all' || activeHabits.find(h => h.id === selectedHabitId)
+                ? selectedHabitId : 'all';
+        }
+
+        // Hábitos a graficar
+        let habitsToChart = activeHabits;
+        if (selectedHabitId !== 'all') {
+            habitsToChart = activeHabits.filter(h => h.id === selectedHabitId);
+        }
+
+        if (habitsToChart.length === 0) {
+            container.innerHTML = `<div class="habits-chart-empty">
+                <div>
+                    <div style="font-size: 2em; margin-bottom: 8px; opacity: 0.5;">📊</div>
+                    <div>Sin hábitos para graficar.<br>Crea uno para ver el progreso.</div>
+                </div>
+            </div>`;
+            legendEl.innerHTML = '';
+            summaryEl.innerHTML = '';
+            return;
+        }
+
+        // Calcular datos para cada hábito: % cumplimiento por día acumulado (móvil de 7 días)
+        const today = new Date();
+        const days = [];
+        for (let i = period - 1; i >= 0; i--) {
+            const d = daysAgo(i);
+            days.push({ date: d, key: ymd(d) });
+        }
+
+        // Calcular series de cada hábito
+        const series = habitsToChart.map((h, idx) => {
+            const color = h.color || CHART_COLORS[idx % CHART_COLORS.length];
+            const createdAt = new Date(h.createdAt);
+
+            // % de adherencia con ventana móvil de 7 días
+            const data = days.map(({ date, key }) => {
+                if (date < createdAt) return null; // No existía aún
+                // Tomar últimos 7 días (incluyendo este)
+                let done = 0, total = 0;
+                for (let j = 0; j < 7; j++) {
+                    const checkDate = new Date(date);
+                    checkDate.setDate(checkDate.getDate() - j);
+                    if (checkDate < createdAt) break;
+                    const cKey = ymd(checkDate);
+                    const log = getLog(h.id, cKey);
+                    if (log === 'skip') continue;
+                    total++;
+                    if (isHabitDone(h, cKey)) done++;
+                }
+                return total > 0 ? Math.round((done / total) * 100) : 0;
+            });
+
+            return { habit: h, color, data };
+        });
+
+        // Línea de promedio global
+        const avgSeries = days.map((_, dayIdx) => {
+            const values = series.map(s => s.data[dayIdx]).filter(v => v !== null);
+            if (values.length === 0) return null;
+            return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+        });
+
+        // Renderizar SVG
+        renderChartSVG(container, days, series, avgSeries);
+
+        // Leyenda
+        let legendHTML = series.map(s => `
+            <span class="habits-chart-legend-item ${chartState.hiddenHabits.has(s.habit.id) ? 'dimmed' : ''}" onclick="toggleChartHabit('${s.habit.id}')">
+                <span class="habits-chart-legend-color line-only" style="background: ${s.color};"></span>
+                ${s.habit.emoji} ${escapeHTML(s.habit.name)}
+            </span>
+        `).join('');
+        if (series.length > 1) {
+            legendHTML += `
+                <span class="habits-chart-legend-item ${chartState.hideAverage ? 'dimmed' : ''}" onclick="toggleChartAverage()">
+                    <span class="habits-chart-legend-color line-only" style="background: var(--text-soft); border-top: 2px dashed var(--text-soft); background: transparent;"></span>
+                    📊 Promedio
+                </span>
+            `;
+        }
+        legendEl.innerHTML = legendHTML;
+
+        // Resumen con stats clave
+        renderChartSummary(summaryEl, series, period);
+    }
+
+    function renderChartSVG(container, days, series, avgSeries) {
+        // Dimensiones (responsivo via viewBox)
+        const W = 800, H = 280;
+        const padTop = 20, padBottom = 35, padLeft = 38, padRight = 12;
+        const chartW = W - padLeft - padRight;
+        const chartH = H - padTop - padBottom;
+
+        const xStep = days.length > 1 ? chartW / (days.length - 1) : 0;
+        const xAt = i => padLeft + i * xStep;
+        const yAt = v => v === null ? null : padTop + chartH - (chartH * v / 100);
+
+        // Construir grid y ejes
+        let svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Gráfico de cumplimiento de hábitos">`;
+
+        // Grid horizontal (0%, 25%, 50%, 75%, 100%)
+        [0, 25, 50, 75, 100].forEach(v => {
+            const y = yAt(v);
+            svg += `<line x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" stroke="var(--border)" stroke-width="1" stroke-dasharray="${v === 0 || v === 100 ? '' : '2,3'}" opacity="0.6"/>`;
+            svg += `<text x="${padLeft - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="var(--text-muted)">${v}%</text>`;
+        });
+
+        // Etiquetas del eje X (máx 8-10)
+        const maxLabels = days.length <= 7 ? days.length : (days.length <= 30 ? 8 : 10);
+        const labelStep = Math.max(1, Math.floor(days.length / maxLabels));
+        days.forEach((d, i) => {
+            if (i % labelStep === 0 || i === days.length - 1) {
+                const x = xAt(i);
+                const fmt = days.length <= 14
+                    ? d.date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })
+                    : days.length <= 60
+                        ? d.date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+                        : d.date.toLocaleDateString('es-ES', { month: 'short' });
+                svg += `<text x="${x}" y="${H - padBottom + 16}" text-anchor="middle" font-size="9.5" fill="var(--text-muted)">${escapeHTML(fmt)}</text>`;
+            }
+        });
+
+        // Línea de promedio (gris punteado)
+        if (series.length > 1 && !chartState.hideAverage) {
+            const points = avgSeries.map((v, i) => {
+                if (v === null) return null;
+                return `${xAt(i)},${yAt(v)}`;
+            }).filter(Boolean);
+            if (points.length > 1) {
+                svg += `<polyline points="${points.join(' ')}" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="5,4" opacity="0.7"/>`;
+            }
+        }
+
+        // Líneas de cada hábito
+        series.forEach(s => {
+            if (chartState.hiddenHabits.has(s.habit.id)) return;
+            const points = s.data.map((v, i) => {
+                if (v === null) return null;
+                return { x: xAt(i), y: yAt(v), v, day: days[i] };
+            }).filter(Boolean);
+
+            if (points.length === 0) return;
+
+            // Area gradient bajo la línea (suave)
+            if (series.length === 1) {
+                const areaPath = `M ${points[0].x},${H - padBottom} L ${points.map(p => `${p.x},${p.y}`).join(' L ')} L ${points[points.length-1].x},${H - padBottom} Z`;
+                const gradId = `grad-${s.habit.id}`;
+                svg += `<defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${s.color}" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="${s.color}" stop-opacity="0"/>
+                </linearGradient></defs>`;
+                svg += `<path d="${areaPath}" fill="url(#${gradId})"/>`;
+            }
+
+            // Línea
+            const pointsStr = points.map(p => `${p.x},${p.y}`).join(' ');
+            svg += `<polyline points="${pointsStr}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+            // Puntos individuales
+            points.forEach(p => {
+                svg += `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${s.color}" stroke="var(--bg-elev)" stroke-width="1.5"
+                    data-tooltip="${escapeHTML(s.habit.emoji)} ${escapeHTML(s.habit.name)}: ${p.v}% — ${p.day.date.toLocaleDateString('es-ES')}"
+                    style="cursor: pointer;"/>`;
+            });
+        });
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+
+        // Tooltip al hover (un solo div global)
+        if (!container.querySelector('.habits-chart-tooltip')) {
+            const tip = document.createElement('div');
+            tip.className = 'habits-chart-tooltip';
+            container.appendChild(tip);
+        }
+        const tip = container.querySelector('.habits-chart-tooltip');
+        container.querySelectorAll('circle[data-tooltip]').forEach(c => {
+            c.addEventListener('mouseenter', (e) => {
+                tip.textContent = c.dataset.tooltip;
+                const rect = container.getBoundingClientRect();
+                const cRect = c.getBoundingClientRect();
+                tip.style.left = (cRect.left - rect.left + cRect.width / 2) + 'px';
+                tip.style.top = (cRect.top - rect.top) + 'px';
+                tip.classList.add('show');
+            });
+            c.addEventListener('mouseleave', () => {
+                tip.classList.remove('show');
+            });
+        });
+    }
+
+    function renderChartSummary(el, series, period) {
+        if (series.length === 0) {
+            el.innerHTML = '';
+            return;
+        }
+
+        // Calcular stats para mostrar:
+        // 1. Hábito con mejor adherencia
+        // 2. Promedio general en el período
+        // 3. Días hasta próximo hito (del de mejor racha)
+
+        const stats = series.map(s => {
+            const validValues = s.data.filter(v => v !== null);
+            const avg = validValues.length > 0
+                ? Math.round(validValues.reduce((a, b) => a + b, 0) / validValues.length)
+                : 0;
+            const streak = calculateStreak(s.habit);
+            const nextMilestone = HABIT_MILESTONES.find(m => streak.current < m.days);
+            return { habit: s.habit, color: s.color, avg, streak, nextMilestone };
+        });
+
+        // Mejor hábito
+        const best = stats.reduce((a, b) => a.avg >= b.avg ? a : b);
+        // Promedio global
+        const globalAvg = Math.round(stats.reduce((sum, s) => sum + s.avg, 0) / stats.length);
+        // Hábito con mejor racha actual
+        const topStreak = stats.reduce((a, b) => a.streak.current >= b.streak.current ? a : b);
+
+        const cards = [
+            `<div class="habits-chart-stat">
+                <div class="stat-emoji">📈</div>
+                <div class="stat-body">
+                    <div class="stat-value">${globalAvg}%</div>
+                    <div class="stat-label">Promedio global (${period}d)</div>
+                </div>
+            </div>`,
+            `<div class="habits-chart-stat">
+                <div class="stat-emoji">🏅</div>
+                <div class="stat-body">
+                    <div class="stat-value">${best.habit.emoji} ${escapeHTML(best.habit.name.length > 18 ? best.habit.name.slice(0, 16) + '…' : best.habit.name)}</div>
+                    <div class="stat-label">Mejor adherencia: ${best.avg}%</div>
+                </div>
+            </div>`,
+            `<div class="habits-chart-stat">
+                <div class="stat-emoji">🔥</div>
+                <div class="stat-body">
+                    <div class="stat-value">${topStreak.streak.current} ${topStreak.streak.current === 1 ? 'día' : 'días'}</div>
+                    <div class="stat-label">${topStreak.habit.emoji} ${escapeHTML(topStreak.habit.name.length > 16 ? topStreak.habit.name.slice(0, 14) + '…' : topStreak.habit.name)}</div>
+                </div>
+            </div>`
+        ];
+
+        // Próximo hito (del top streak)
+        if (topStreak.nextMilestone) {
+            const remaining = topStreak.nextMilestone.days - topStreak.streak.current;
+            cards.push(`<div class="habits-chart-stat">
+                <div class="stat-emoji">${topStreak.nextMilestone.emoji}</div>
+                <div class="stat-body">
+                    <div class="stat-value">${remaining} ${remaining === 1 ? 'día' : 'días'}</div>
+                    <div class="stat-label">Para ${topStreak.nextMilestone.label}</div>
+                </div>
+            </div>`);
+        } else {
+            cards.push(`<div class="habits-chart-stat">
+                <div class="stat-emoji">👑</div>
+                <div class="stat-body">
+                    <div class="stat-value">¡Máximo!</div>
+                    <div class="stat-label">Todos los hitos logrados</div>
+                </div>
+            </div>`);
+        }
+
+        el.innerHTML = cards.join('');
+    }
+
+    function toggleChartHabit(habitId) {
+        if (chartState.hiddenHabits.has(habitId)) {
+            chartState.hiddenHabits.delete(habitId);
+        } else {
+            chartState.hiddenHabits.add(habitId);
+        }
+        renderHabitsChart();
+    }
+
+    function toggleChartAverage() {
+        chartState.hideAverage = !chartState.hideAverage;
+        renderHabitsChart();
+    }
+
     /* === Renderizado === */
     function setModule(module) {
         state.currentModule = module;
@@ -11065,6 +11546,7 @@
         if (module === 'habits') {
             renderHabits();
             renderHabitsDashboard();
+            renderHabitsChart();
         }
     }
 
@@ -11091,6 +11573,11 @@
             count++;
         });
         $('#habitsAdherence').textContent = count > 0 ? `${Math.round(totalAdh / count)}%` : '0%';
+
+        // v24+: redibujar gráfico si está visible
+        if (state.currentModule === 'habits' && typeof renderHabitsChart === 'function') {
+            renderHabitsChart();
+        }
     }
 
     function renderHabits() {
@@ -11754,7 +12241,9 @@
         confirmDeleteHabit, toggleArchiveHabit, selectHabitEmoji, selectHabitColor,
         openHabitDetail, closeHabitDetailModal, editHabitFromDetail,
         toggleHabitToday, incrementHabit, setHabitQuantity, markHabitSkip,
-        exportHabitsReport, renderHabits, renderHabitsDashboard
+        exportHabitsReport, renderHabits, renderHabitsDashboard,
+        // v24+ — Gráfico
+        renderHabitsChart, toggleChartHabit, toggleChartAverage
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
