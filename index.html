@@ -9471,8 +9471,69 @@
             showToast('success', '✓ Drive conectado', 'Datos descargados de la nube.');
             return;
         }
-        // Ambos tienen datos → preguntar al usuario
-        showConflictModal(file);
+        // v23 fix: Descargar remoto y comparar CONTENIDO antes de mostrar modal
+        try {
+            const resp = await driveApiCall(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
+            const remoteData = await resp.json();
+            const decision = autoResolveIfIdentical(remoteData, file);
+            if (decision === 'auto-cloud') {
+                applyRemoteSnapshot(remoteData);
+                drive.lastRemoteModifiedTime = file.modifiedTime;
+                drive.lastSyncedAt = new Date().toISOString();
+                persistDriveConfig();
+                updateDriveStatus('synced', 'Sincronizado ✓', 'Datos idénticos: tomé la versión más reciente');
+                if (typeof updateLastSaveIndicator === 'function') updateLastSaveIndicator();
+                showToast('success', '✓ Sincronizado', 'Las dos versiones eran idénticas.');
+                return;
+            } else if (decision === 'auto-local') {
+                drive.lastRemoteModifiedTime = file.modifiedTime;
+                await drivePushToCloud();
+                showToast('success', '✓ Sincronizado', 'Las dos versiones eran idénticas.');
+                return;
+            }
+            // Si NO son idénticas → mostrar modal con info ya descargada
+            conflictRemoteData = remoteData;
+            renderConflictComparison(remoteData, file);
+            $('#driveConflictModal').classList.add('show');
+            updateDriveStatus('conflict', '⚠️ Conflicto', 'Decide qué versión usar');
+        } catch (e) {
+            console.error('Initial sync content check failed:', e);
+            // Fallback: mostrar modal como antes
+            showConflictModal(file);
+        }
+    }
+
+    /* v23 NUEVO: Detectar si dos snapshots son idénticos en contenido.
+       Retorna:
+         - 'auto-cloud': aplicar nube silenciosamente (más reciente)
+         - 'auto-local': subir local silenciosamente (más reciente)
+         - 'modal': mostrar modal porque hay diferencias reales */
+    function autoResolveIfIdentical(remoteData, remoteFile) {
+        const localTaskIds = new Set(state.tasks.map(t => t.id));
+        const remoteTaskIds = new Set((remoteData.tasks || []).map(t => t.id));
+
+        // Comparar SETs de IDs
+        if (localTaskIds.size !== remoteTaskIds.size) return 'modal';
+        for (const id of localTaskIds) {
+            if (!remoteTaskIds.has(id)) return 'modal';
+        }
+
+        // Comparar también un hash simple del contenido (títulos + estados)
+        const localHash = state.tasks.map(t =>
+            `${t.id}|${t.titulo}|${t.estado}|${t.prioridad}|${t.responsable || ''}|${t.fecha_vencimiento || ''}`
+        ).sort().join('§');
+        const remoteHash = (remoteData.tasks || []).map(t =>
+            `${t.id}|${t.titulo}|${t.estado}|${t.prioridad}|${t.responsable || ''}|${t.fecha_vencimiento || ''}`
+        ).sort().join('§');
+
+        if (localHash !== remoteHash) return 'modal';
+
+        // Idénticos en contenido. Decidir por timestamp.
+        const localTime = drive.lastSyncedAt ? new Date(drive.lastSyncedAt).getTime() : 0;
+        const remoteTime = remoteFile.modifiedTime ? new Date(remoteFile.modifiedTime).getTime() : 0;
+
+        if (remoteTime > localTime) return 'auto-cloud';
+        return 'auto-local';
     }
 
     /* === Sync manual === */
@@ -9482,9 +9543,34 @@
             // Chequear si la nube cambió desde nuestro último sync
             const file = await findDriveFile();
             if (file && drive.lastRemoteModifiedTime && file.modifiedTime > drive.lastRemoteModifiedTime) {
-                // Hubo cambios remotos → conflicto
-                showConflictModal(file);
-                return;
+                // Antes de mostrar modal, comparar contenido
+                try {
+                    const resp = await driveApiCall(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
+                    const remoteData = await resp.json();
+                    const decision = autoResolveIfIdentical(remoteData, file);
+                    if (decision === 'auto-cloud') {
+                        applyRemoteSnapshot(remoteData);
+                        drive.lastRemoteModifiedTime = file.modifiedTime;
+                        drive.lastSyncedAt = new Date().toISOString();
+                        persistDriveConfig();
+                        updateDriveStatus('synced', 'Sincronizado ✓', 'Datos idénticos');
+                        if (typeof updateLastSaveIndicator === 'function') updateLastSaveIndicator();
+                        return;
+                    } else if (decision === 'auto-local') {
+                        drive.lastRemoteModifiedTime = file.modifiedTime;
+                        await drivePushToCloud();
+                        return;
+                    }
+                    // Diferencias reales → conflicto
+                    conflictRemoteData = remoteData;
+                    renderConflictComparison(remoteData, file);
+                    $('#driveConflictModal').classList.add('show');
+                    updateDriveStatus('conflict', '⚠️ Conflicto', 'Decide qué versión usar');
+                    return;
+                } catch (e) {
+                    showConflictModal(file);
+                    return;
+                }
             }
             await drivePushToCloud();
             showToast('success', '✓ Sincronizado', '');
@@ -9511,8 +9597,27 @@
                 // Antes de push, verifica que la nube no haya sido modificada
                 const file = await findDriveFile();
                 if (file && drive.lastRemoteModifiedTime && file.modifiedTime > drive.lastRemoteModifiedTime) {
-                    showConflictModal(file);
-                    return;
+                    // v23 fix: Verificar si el contenido es idéntico antes de mostrar modal
+                    try {
+                        const resp = await driveApiCall(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
+                        const remoteData = await resp.json();
+                        const decision = autoResolveIfIdentical(remoteData, file);
+                        if (decision === 'auto-cloud' || decision === 'auto-local') {
+                            // Idéntico, solo actualizar timestamp y subir nuestra versión
+                            drive.lastRemoteModifiedTime = file.modifiedTime;
+                            await drivePushToCloud();
+                            return;
+                        }
+                        // Diferencias reales → conflicto
+                        conflictRemoteData = remoteData;
+                        renderConflictComparison(remoteData, file);
+                        $('#driveConflictModal').classList.add('show');
+                        updateDriveStatus('conflict', '⚠️ Conflicto', 'Decide qué versión usar');
+                        return;
+                    } catch (e) {
+                        showConflictModal(file);
+                        return;
+                    }
                 }
                 await drivePushToCloud();
             } catch (e) {
