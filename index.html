@@ -67,27 +67,39 @@
 
         /* Modo oscuro */
         [data-theme="dark"] {
-            --bg: #0b1220;
-            --bg-elev: #121a2b;
-            --bg-soft: #1a2438;
-            --bg-muted: #1a2438;
+            /* Fondos: grises cálidos en lugar de azules saturados (estilo Linear/Notion) */
+            --bg: #18181b;             /* Gris muy oscuro pero NO negro puro */
+            --bg-elev: #27272a;        /* Card / elementos elevados */
+            --bg-soft: #1f1f23;        /* Soft, casi como bg pero un poco más claro */
+            --bg-muted: #27272a;       /* Background apagado */
 
-            --text: #e2e8f0;
-            --text-muted: #94a3b8;
-            --text-soft: #64748b;
+            /* Texto: blanco apagado para reducir fatiga */
+            --text: #e4e4e7;           /* Texto principal (NO blanco puro) */
+            --text-muted: #a1a1aa;     /* Texto secundario */
+            --text-soft: #71717a;      /* Texto terciario / placeholder */
 
-            --border: #1e293b;
-            --border-strong: #334155;
+            /* Bordes: visibles pero sutiles para diferenciar cards */
+            --border: #3f3f46;
+            --border-strong: #52525b;
 
-            --primary-light: rgba(59, 130, 246, 0.18);
-            --success-light: rgba(16, 185, 129, 0.18);
-            --warning-light: rgba(245, 158, 11, 0.18);
-            --danger-light: rgba(239, 68, 68, 0.18);
+            /* Colores con saturación reducida para descansar la vista */
+            --primary: #60a5fa;        /* Azul más suave */
+            --primary-dark: #3b82f6;
+            --success: #4ade80;        /* Verde más suave */
+            --warning: #fbbf24;        /* Amarillo cálido */
+            --danger: #f87171;         /* Rojo más suave */
 
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.55);
+            --primary-light: rgba(96, 165, 250, 0.15);
+            --success-light: rgba(74, 222, 128, 0.15);
+            --warning-light: rgba(251, 191, 36, 0.15);
+            --danger-light: rgba(248, 113, 113, 0.15);
+
+            /* Sombras más sutiles para dark mode (sombras negras se notan menos) */
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.55);
+            --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.6);
         }
 
         /* =================================================================
@@ -1210,6 +1222,88 @@
         }
 
         .shortcut-row span:first-child { color: var(--text-muted); }
+
+        /* =================================================================
+           NUEVO v22: PROTECCIONES DRIVE + DARK MODE MEJORADO
+           ================================================================= */
+        /* Comparación de conflicto: tabla side-by-side */
+        .conflict-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 14px 0;
+        }
+        .conflict-comparison-side {
+            background: var(--bg-muted);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+        }
+        .conflict-comparison-side.has-more {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+        .conflict-comparison-side.has-less {
+            border-color: var(--danger);
+        }
+        .conflict-comparison-side h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.9em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .conflict-comparison-side .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.85em;
+            border-bottom: 1px solid var(--border);
+        }
+        .conflict-comparison-side .metric:last-of-type { border: none; }
+        .conflict-comparison-side .metric .value {
+            font-weight: 700;
+            color: var(--text);
+        }
+        .conflict-comparison-side .preview-list {
+            font-size: 0.78em;
+            color: var(--text-soft);
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .conflict-comparison-side .preview-list .item {
+            padding: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .conflict-comparison-side.has-more h4 { color: var(--success); }
+        .conflict-comparison-side.has-less h4 { color: var(--danger); }
+
+        /* Última copia segura visible en el header */
+        .last-backup-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+        .last-backup-indicator svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        @media (max-width: 767px) {
+            .conflict-comparison {
+                grid-template-columns: 1fr;
+            }
+            .last-backup-indicator {
+                display: none;
+            }
+        }
 
         /* =================================================================
            NUEVO v21: FILTROS MULTI-SELECT
@@ -3270,6 +3364,69 @@
             margin-top: 2px;
         }
 
+        /* =================================================================
+           NUEVO v22: INDICADOR DE ÚLTIMO GUARDADO (debajo del reloj)
+           ================================================================= */
+        .last-save-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+            padding: 3px 9px;
+            font-size: 0.7em;
+            font-weight: 600;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+            transition: all var(--transition);
+        }
+        .last-save-info .save-icon {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
+        }
+        /* Estados de color según antigüedad del último guardado */
+        .last-save-info.never {
+            background: rgba(148, 163, 184, 0.25);
+            color: rgba(255, 255, 255, 0.7);
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+        .last-save-info.fresh {
+            /* Guardado hace menos de 2 minutos: verde */
+            background: rgba(34, 197, 94, 0.3);
+            color: #d1fae5;
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+        .last-save-info.fresh .save-icon { color: #86efac; }
+        .last-save-info.recent {
+            /* Entre 2 y 10 minutos: amarillo */
+            background: rgba(245, 158, 11, 0.3);
+            color: #fef3c7;
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        .last-save-info.stale {
+            /* Más de 10 minutos: rojo (advertencia) */
+            background: rgba(239, 68, 68, 0.3);
+            color: #fee2e2;
+            border-color: rgba(239, 68, 68, 0.5);
+            animation: pulseSlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .last-save-info.saving {
+            /* En proceso de guardar: animación */
+            background: rgba(59, 130, 246, 0.35);
+            color: #dbeafe;
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+        .last-save-info.saving .save-icon {
+            animation: spinSync 1s linear infinite;
+        }
+
         .app-header-actions {
             position: relative;
             z-index: 1;
@@ -4198,6 +4355,10 @@
             <div class="live-clock">
                 <div class="clock-time" id="clockTime">--:--</div>
                 <div class="clock-date" id="clockDate">—</div>
+                <div class="last-save-info" id="lastSaveInfo" title="Última vez que se sincronizó con Drive">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="save-icon"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span id="lastSaveText">Sin guardar</span>
+                </div>
             </div>
             <div class="app-header-actions">
                 <button class="session-chip" id="sessionChip" onclick="showSessionMenu()" title="Tu sesión" style="display:none;">
@@ -4842,38 +5003,79 @@
             <div class="modal-header">
                 <h2>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--warning);"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Conflicto de sincronización
+                    ⚠️ Conflicto de sincronización
                 </h2>
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.92em; line-height: 1.6;">
-                    Detecté que los datos en la nube fueron modificados desde otro dispositivo después de la última sincronización.
-                    Si subo tus datos locales ahora, perderé los cambios remotos. <strong>Elige qué versión conservar:</strong>
+                    Hay diferencias entre tus datos LOCALES (este dispositivo) y los datos EN LA NUBE (otro dispositivo).
+                    <strong>Revisa cuidadosamente el contenido de cada versión antes de decidir.</strong>
                 </p>
 
-                <div class="conflict-options">
-                    <button class="conflict-option" onclick="driveResolveConflict('local')">
+                <div id="conflictDangerWarning" style="display: none; background: var(--danger-light); border: 2px solid var(--danger); padding: 14px; border-radius: var(--radius); margin: 14px 0;">
+                    <div style="color: var(--danger); font-weight: 700; font-size: 1em; margin-bottom: 6px;">
+                        🚨 ATENCIÓN: una de las versiones tiene MUCHOS más datos
+                    </div>
+                    <div style="font-size: 0.88em; line-height: 1.5;" id="conflictDangerDetail"></div>
+                </div>
+
+                <div class="conflict-comparison" id="conflictComparison">
+                    <!-- Se llena dinámicamente con la comparación -->
+                </div>
+
+                <div class="conflict-options-v2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                    <button class="conflict-option" id="conflictOptionLocal" onclick="confirmConflictResolution('local')">
                         <div class="conflict-option-title">📲 Usar versión LOCAL</div>
-                        <div class="conflict-option-meta">
-                            <span id="conflictLocalMeta">…</span>
+                        <div class="conflict-option-meta" style="margin-bottom: 8px;">
+                            (este dispositivo)
                         </div>
-                        <div class="badge">Sobreescribirá la nube</div>
+                        <div class="badge" id="conflictLocalBadge">Sobrescribirá la nube</div>
                     </button>
-                    <button class="conflict-option" onclick="driveResolveConflict('cloud')">
+                    <button class="conflict-option" id="conflictOptionCloud" onclick="confirmConflictResolution('cloud')">
                         <div class="conflict-option-title">☁️ Usar versión EN LA NUBE</div>
-                        <div class="conflict-option-meta">
-                            <span id="conflictCloudMeta">…</span>
+                        <div class="conflict-option-meta" style="margin-bottom: 8px;">
+                            (lo que está en Google Drive)
                         </div>
-                        <div class="badge">Reemplazará lo local</div>
+                        <div class="badge" id="conflictCloudBadge">Reemplazará lo local</div>
                     </button>
                 </div>
 
-                <p style="font-size: 0.78em; color: var(--text-muted); margin-top: 14px; line-height: 1.5;">
-                    💡 Antes de aplicar cualquiera, se creará un backup automático local de la versión actual por seguridad.
-                </p>
+                <div style="background: var(--bg-muted); padding: 12px; border-radius: var(--radius); margin-top: 14px; font-size: 0.82em; line-height: 1.5;">
+                    🛡️ <strong>Protección automática</strong>:<br>
+                    • Se creará un backup local antes de aplicar el cambio<br>
+                    • Si vas a perder más de 3 tareas, te pediré confirmación adicional<br>
+                    • Si NO estás seguro, click "Cancelar" — los datos quedan como están
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDriveConflictModal()">Cancelar — decidir luego</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ CONFIRMACIÓN DESTRUCTIVA (segundo paso si hay riesgo) ============ -->
+    <div id="destructiveConfirmModal" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="color: var(--danger);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Confirmación crítica
+                </h2>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.92em; line-height: 1.6;" id="destructiveConfirmMsg">
+                    Estás a punto de perder datos. Esta acción NO se puede deshacer fácilmente.
+                </p>
+                <div style="background: var(--danger-light); padding: 14px; border-radius: var(--radius); margin: 14px 0;">
+                    <p style="color: var(--danger); font-weight: 600; margin-bottom: 8px;">
+                        Para confirmar, escribe la palabra <code style="background: var(--bg-elev); padding: 2px 8px; border-radius: 4px;">ENTIENDO</code> abajo:
+                    </p>
+                    <input type="text" id="destructiveConfirmInput" placeholder="Escribe ENTIENDO" autocomplete="off" style="width: 100%; padding: 10px; border: 2px solid var(--danger); border-radius: var(--radius-sm); background: var(--bg-elev); font-family: 'SF Mono', Consolas, monospace; text-transform: uppercase;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDestructiveConfirmModal()">Cancelar</button>
+                <button class="btn btn-danger" id="destructiveConfirmBtn" onclick="executeDestructiveAction()" disabled>Aplicar</button>
             </div>
         </div>
     </div>
@@ -5014,7 +5216,7 @@
     // Versión actual del esquema de datos
     const CURRENT_SCHEMA_VERSION = 11;
     // Máximo de backups que mantener
-    const MAX_BACKUPS = 10;
+    const MAX_BACKUPS = 25;
     // Intervalo de backup automático (días)
     const AUTO_BACKUP_INTERVAL_DAYS = 3;
 
@@ -6401,6 +6603,59 @@
         $('#clockTime').textContent = `${hh}:${mm}`;
         const opts = { weekday: 'long', day: 'numeric', month: 'long' };
         $('#clockDate').textContent = now.toLocaleDateString('es-ES', opts);
+        updateLastSaveIndicator();
+    }
+
+    /* NUEVO v22: Indicador de último guardado con código de colores */
+    function updateLastSaveIndicator() {
+        const el = $('#lastSaveInfo');
+        const text = $('#lastSaveText');
+        if (!el || !text) return;
+
+        // Quitar todas las clases de estado primero
+        el.classList.remove('never', 'fresh', 'recent', 'stale', 'saving');
+
+        // Si estamos en proceso de guardar (push pendiente o syncing activo)
+        if (drive && drive.connected && drive.pendingPushTimer) {
+            el.classList.add('saving');
+            text.textContent = 'Guardando...';
+            el.title = 'Hay cambios pendientes que se subirán a Drive en unos segundos.';
+            return;
+        }
+
+        // Si nunca se ha sincronizado
+        if (!drive || !drive.connected || !drive.lastSyncedAt) {
+            el.classList.add('never');
+            text.textContent = drive && drive.connected ? 'Sin guardar aún' : 'Sin Drive';
+            el.title = drive && drive.connected
+                ? 'No se ha guardado nada en Drive aún.'
+                : 'Drive no está conectado. Los cambios solo viven en este dispositivo.';
+            return;
+        }
+
+        // Calcular antigüedad
+        const lastSave = new Date(drive.lastSyncedAt);
+        const now = new Date();
+        const diffMs = now - lastSave;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHr = Math.floor(diffMin / 60);
+
+        // Texto humano legible
+        let label;
+        if (diffSec < 30) label = 'Guardado ahora';
+        else if (diffSec < 60) label = `Hace ${diffSec}s`;
+        else if (diffMin < 60) label = `Hace ${diffMin} min`;
+        else if (diffHr < 24) label = `Hace ${diffHr}h`;
+        else label = lastSave.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+
+        text.textContent = label;
+        el.title = `Última sincronización con Google Drive: ${lastSave.toLocaleString('es-ES')}`;
+
+        // Color según antigüedad
+        if (diffMin < 2) el.classList.add('fresh');
+        else if (diffMin < 10) el.classList.add('recent');
+        else el.classList.add('stale');
     }
 
     function startClock() {
@@ -6413,6 +6668,9 @@
         }, ms);
         // Also refresh greeting when hour changes (cheap: every 5 min)
         setInterval(updateGreeting, 5 * 60 * 1000);
+        // El indicador de guardado se actualiza más frecuente (cada 10s)
+        // para que "hace X segundos" sea preciso al inicio
+        setInterval(updateLastSaveIndicator, 10000);
     }
 
     /* ===================================================================
@@ -9005,6 +9263,7 @@
         drive.lastSyncedAt = new Date().toISOString();
         persistDriveConfig();
         updateDriveStatus('synced', 'Sincronizado ✓', 'Última: ' + new Date(drive.lastSyncedAt).toLocaleTimeString('es-ES'));
+        if (typeof updateLastSaveIndicator === 'function') updateLastSaveIndicator();
     }
 
     /* === Bajar (pull) === */
@@ -9048,6 +9307,7 @@
         drive.lastSyncedAt = new Date().toISOString();
         persistDriveConfig();
         updateDriveStatus('synced', 'Sincronizado ✓', 'Descargado de la nube');
+        if (typeof updateLastSaveIndicator === 'function') updateLastSaveIndicator();
         return { kind: 'pulled', data };
     }
 
@@ -9104,6 +9364,7 @@
         }
         if (drive.pendingPushTimer) clearTimeout(drive.pendingPushTimer);
         updateDriveStatus('syncing', 'Cambios pendientes…', 'Subirá en ' + (DRIVE_DEBOUNCE_MS/1000) + 's');
+        if (typeof updateLastSaveIndicator === 'function') updateLastSaveIndicator();
         drive.pendingPushTimer = setTimeout(async () => {
             drive.pendingPushTimer = null;
             try {
@@ -9150,40 +9411,187 @@
 
     /* === Modal de conflicto === */
     let conflictRemoteFile = null;
-    function showConflictModal(remoteFile) {
+    let conflictRemoteData = null; // contenido del JSON remoto (lo descargamos)
+    let pendingDestructiveAction = null; // función a ejecutar cuando se escribe ENTIENDO
+
+    async function showConflictModal(remoteFile) {
         conflictRemoteFile = remoteFile;
-        const localCount = state.tasks.length;
-        const localLast = drive.lastSyncedAt ? new Date(drive.lastSyncedAt).toLocaleString('es-ES') : 'nunca';
-        $('#conflictLocalMeta').textContent = `${localCount} tareas — última sync: ${localLast}`;
 
-        const remoteTime = remoteFile.modifiedTime
-            ? new Date(remoteFile.modifiedTime).toLocaleString('es-ES')
-            : 'desconocido';
-        $('#conflictCloudMeta').textContent = `Modificado en otro dispositivo: ${remoteTime}`;
-
+        // Mostrar modal con "cargando" mientras descargamos el JSON remoto
+        $('#conflictComparison').innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-soft);">Comparando versiones...</div>';
         $('#driveConflictModal').classList.add('show');
-        updateDriveStatus('conflict', '⚠️ Conflicto', 'Decide qué versión usar');
+        updateDriveStatus('conflict', '⚠️ Conflicto', 'Comparando versiones...');
+
+        // Descargar contenido remoto para mostrar comparación real
+        try {
+            const resp = await driveApiCall(`https://www.googleapis.com/drive/v3/files/${remoteFile.id}?alt=media`);
+            const remoteData = await resp.json();
+            conflictRemoteData = remoteData;
+            renderConflictComparison(remoteData, remoteFile);
+        } catch (e) {
+            console.error('Failed to fetch remote for comparison:', e);
+            $('#conflictComparison').innerHTML = `
+                <div style="background: var(--danger-light); padding: 12px; border-radius: var(--radius); color: var(--danger);">
+                    ⚠️ No pude descargar la versión remota para comparar. Procede con cuidado.
+                </div>
+            `;
+        }
+    }
+
+    function renderConflictComparison(remoteData, remoteFile) {
+        const localTasks = state.tasks.length;
+        const localTeam = state.team.length;
+        const localProjects = state.projects.length;
+        const localTemplates = (state.templates || []).length;
+
+        const remoteTasks = (remoteData.tasks || []).length;
+        const remoteTeam = (remoteData.team || []).length;
+        const remoteProjects = (remoteData.projects || []).length;
+        const remoteTemplates = (remoteData.templates || []).length;
+
+        // Diferencias
+        const taskDiff = localTasks - remoteTasks;
+        const dangerLocal = remoteTasks > localTasks && (remoteTasks - localTasks) >= 3;
+        const dangerCloud = localTasks > remoteTasks && (localTasks - remoteTasks) >= 3;
+
+        // Lista preview de tareas (primeras 5)
+        const localPreview = state.tasks.slice(0, 5).map(t => t.titulo).join('|');
+        const remotePreview = (remoteData.tasks || []).slice(0, 5).map(t => t.titulo).join('|');
+
+        const localLastMod = drive.lastSyncedAt
+            ? new Date(drive.lastSyncedAt).toLocaleString('es-ES')
+            : 'desconocida';
+        const remoteLastMod = remoteFile.modifiedTime
+            ? new Date(remoteFile.modifiedTime).toLocaleString('es-ES')
+            : 'desconocida';
+
+        const sideClass = (isMore, isLess) => {
+            if (isMore) return 'has-more';
+            if (isLess) return 'has-less';
+            return '';
+        };
+
+        $('#conflictComparison').innerHTML = `
+            <div class="conflict-comparison-side ${sideClass(localTasks > remoteTasks, localTasks < remoteTasks && (remoteTasks - localTasks) >= 3)}">
+                <h4>📲 Local (este dispositivo)</h4>
+                <div class="metric"><span>Tareas:</span> <span class="value">${localTasks}</span></div>
+                <div class="metric"><span>Equipo:</span> <span class="value">${localTeam} miembro${localTeam === 1 ? '' : 's'}</span></div>
+                <div class="metric"><span>Proyectos:</span> <span class="value">${localProjects}</span></div>
+                <div class="metric"><span>Plantillas:</span> <span class="value">${localTemplates}</span></div>
+                <div class="metric"><span>Última sync:</span> <span class="value" style="font-size:0.86em;">${localLastMod}</span></div>
+                <div class="preview-list">
+                    <strong>Primeras tareas:</strong>
+                    ${state.tasks.slice(0, 5).map(t => `<div class="item">• ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('') || '<div class="item" style="font-style:italic;">Sin tareas</div>'}
+                </div>
+            </div>
+            <div class="conflict-comparison-side ${sideClass(remoteTasks > localTasks, remoteTasks < localTasks && (localTasks - remoteTasks) >= 3)}">
+                <h4>☁️ Nube (Google Drive)</h4>
+                <div class="metric"><span>Tareas:</span> <span class="value">${remoteTasks}</span></div>
+                <div class="metric"><span>Equipo:</span> <span class="value">${remoteTeam} miembro${remoteTeam === 1 ? '' : 's'}</span></div>
+                <div class="metric"><span>Proyectos:</span> <span class="value">${remoteProjects}</span></div>
+                <div class="metric"><span>Plantillas:</span> <span class="value">${remoteTemplates}</span></div>
+                <div class="metric"><span>Modificado:</span> <span class="value" style="font-size:0.86em;">${remoteLastMod}</span></div>
+                <div class="preview-list">
+                    <strong>Primeras tareas:</strong>
+                    ${(remoteData.tasks || []).slice(0, 5).map(t => `<div class="item">• ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('') || '<div class="item" style="font-style:italic;">Sin tareas</div>'}
+                </div>
+            </div>
+        `;
+
+        // Warning enfático si hay riesgo grande
+        const dangerEl = $('#conflictDangerWarning');
+        const dangerDetail = $('#conflictDangerDetail');
+        if (dangerLocal || dangerCloud) {
+            dangerEl.style.display = 'block';
+            if (dangerLocal) {
+                dangerDetail.innerHTML = `La <strong>NUBE</strong> tiene <strong>${remoteTasks - localTasks} tareas más</strong> que tu local. Si eliges "Usar versión LOCAL", esas tareas se perderán para siempre.`;
+            } else {
+                dangerDetail.innerHTML = `Tu <strong>LOCAL</strong> tiene <strong>${localTasks - remoteTasks} tareas más</strong> que la nube. Si eliges "Usar versión EN LA NUBE", esas tareas se perderán para siempre.`;
+            }
+        } else {
+            dangerEl.style.display = 'none';
+        }
+
+        // Badges
+        $('#conflictLocalBadge').textContent = remoteTasks >= 3
+            ? `${remoteTasks} tareas remotas se perderán`
+            : 'Sobrescribirá la nube';
+        $('#conflictCloudBadge').textContent = localTasks >= 3
+            ? `${localTasks} tareas locales se perderán`
+            : 'Reemplazará lo local';
     }
 
     function closeDriveConflictModal() {
         $('#driveConflictModal').classList.remove('show');
         conflictRemoteFile = null;
+        conflictRemoteData = null;
+    }
+
+    function closeDestructiveConfirmModal() {
+        $('#destructiveConfirmModal').classList.remove('show');
+        $('#destructiveConfirmInput').value = '';
+        $('#destructiveConfirmBtn').disabled = true;
+        pendingDestructiveAction = null;
+    }
+
+    /* Cuando se hace click en "Usar Local" o "Usar Nube":
+       - Si pérdida pequeña → ejecutar directo
+       - Si pérdida grande (3+ tareas) → pedir escribir ENTIENDO */
+    function confirmConflictResolution(choice) {
+        if (!conflictRemoteData) {
+            // Sin data remota, no podemos calcular; proceder con cuidado
+            driveResolveConflict(choice);
+            return;
+        }
+        const localCount = state.tasks.length;
+        const remoteCount = (conflictRemoteData.tasks || []).length;
+        const willLose = choice === 'local'
+            ? remoteCount - localCount  // pierdes lo que estaba en nube
+            : localCount - remoteCount; // pierdes lo que estaba en local
+
+        if (willLose >= 3) {
+            // Riesgo alto: pedir confirmación extra
+            const msg = choice === 'local'
+                ? `Vas a SUBIR tu versión local que tiene <strong>${localCount} tareas</strong>, sobrescribiendo la nube que tiene <strong>${remoteCount} tareas</strong>. Perderás <strong>${willLose} tareas</strong> que están en la nube.`
+                : `Vas a DESCARGAR la versión de la nube que tiene <strong>${remoteCount} tareas</strong>, reemplazando tu local que tiene <strong>${localCount} tareas</strong>. Perderás <strong>${willLose} tareas</strong> que están en local.`;
+
+            $('#destructiveConfirmMsg').innerHTML = msg;
+            pendingDestructiveAction = () => driveResolveConflict(choice);
+            $('#destructiveConfirmInput').value = '';
+            $('#destructiveConfirmBtn').disabled = true;
+            $('#destructiveConfirmModal').classList.add('show');
+            closeDriveConflictModal();
+            setTimeout(() => $('#destructiveConfirmInput').focus(), 100);
+        } else {
+            // Riesgo bajo: ejecutar directo
+            driveResolveConflict(choice);
+        }
+    }
+
+    function executeDestructiveAction() {
+        if ($('#destructiveConfirmInput').value.trim().toUpperCase() !== 'ENTIENDO') {
+            showToast('warning', 'Escribe ENTIENDO', 'Confirma escribiendo la palabra exacta.');
+            return;
+        }
+        const action = pendingDestructiveAction;
+        closeDestructiveConfirmModal();
+        if (action) action();
     }
 
     async function driveResolveConflict(choice) {
+        // Backup automático SIEMPRE antes de cualquier resolución
         if (typeof createBackup === 'function') {
-            createBackup('Antes de resolver conflicto Drive (' + choice + ')', 'auto');
+            createBackup(`Antes de resolver conflicto Drive (eligió: ${choice})`, 'auto');
         }
         closeDriveConflictModal();
         try {
             if (choice === 'local') {
-                // Forzar push sobreescribiendo. Para esto leemos el modifiedTime actual
-                // del remoto y lo aceptamos como base.
+                // Forzar push sobreescribiendo
                 const file = await findDriveFile();
                 if (file) drive.lastRemoteModifiedTime = file.modifiedTime;
                 drive.fileId = file ? file.id : null;
                 await drivePushToCloud();
-                showToast('success', '✓ Versión local prevaleció', 'La nube fue sobrescrita con tus datos.');
+                showToast('success', '✓ Versión local subida', 'La nube fue sobrescrita con tus datos.');
             } else if (choice === 'cloud') {
                 await doDrivePull();
                 showToast('success', '✓ Versión nube aplicada', 'Tu local fue reemplazado.');
@@ -9456,12 +9864,25 @@
         // v20 — Drive sync
         saveDriveClientId, driveConnect, driveDisconnect, driveSyncNow,
         drivePullFromCloud, driveResolveConflict, closeDriveConflictModal,
+        // v22 — Protecciones Drive
+        confirmConflictResolution, closeDestructiveConfirmModal, executeDestructiveAction,
         // v21 — auth
         checkLockPassword, initiateGoogleLogin, signOutGoogle, lockAgain, showSessionMenu
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
     initDriveSDK();
+
+    // Listener para habilitar botón de confirmación destructiva al escribir ENTIENDO
+    document.addEventListener('DOMContentLoaded', () => {
+        const destructiveInput = document.getElementById('destructiveConfirmInput');
+        if (destructiveInput) {
+            destructiveInput.addEventListener('input', () => {
+                $('#destructiveConfirmBtn').disabled =
+                    destructiveInput.value.trim().toUpperCase() !== 'ENTIENDO';
+            });
+        }
+    });
 
     // Bootstrap: decidir si mostrar lock screen, login o app
     authBootstrap();
