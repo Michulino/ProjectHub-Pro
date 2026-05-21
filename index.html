@@ -1226,29 +1226,89 @@
         /* =================================================================
            NUEVO v22: PROTECCIONES DRIVE + DARK MODE MEJORADO
            ================================================================= */
-        /* Comparación de conflicto: tabla side-by-side */
-        .conflict-comparison {
+        /* v23: Banner de recomendación en modal de conflicto */
+        .conflict-recommendation {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+            border: 2px solid var(--success);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+        .conflict-recommendation .rec-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .conflict-recommendation .rec-title {
+            font-size: 1.05em;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+        .conflict-recommendation .rec-reason {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* v23: Resumen visual de diferencias */
+        .conflict-diff-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .conflict-diff-summary .diff-stat {
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            text-align: center;
+        }
+        .conflict-diff-summary .stat-label {
+            font-size: 0.74em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .conflict-diff-summary .stat-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--text-soft);
+        }
+        .conflict-diff-summary .stat-value.common { color: var(--primary); }
+        .conflict-diff-summary .stat-value.unique { color: var(--success); }
+
+        /* v23: side-by-side mejorado */
+        .conflict-sides {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 14px 0;
         }
         .conflict-comparison-side {
             background: var(--bg-muted);
             border: 2px solid var(--border);
             border-radius: var(--radius);
             padding: 12px;
+            transition: all 200ms ease;
         }
-        .conflict-comparison-side.has-more {
+        .conflict-comparison-side.recommended {
             border-color: var(--success);
-            background: var(--success-light);
-        }
-        .conflict-comparison-side.has-less {
-            border-color: var(--danger);
+            background: rgba(34, 197, 94, 0.08);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
         }
         .conflict-comparison-side h4 {
             margin: 0 0 8px 0;
-            font-size: 0.9em;
+            font-size: 0.92em;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -1266,20 +1326,51 @@
             font-weight: 700;
             color: var(--text);
         }
-        .conflict-comparison-side .preview-list {
-            font-size: 0.78em;
-            color: var(--text-soft);
-            margin-top: 8px;
+        .conflict-comparison-side .unique-tasks {
+            margin-top: 10px;
+            padding: 8px;
+            background: var(--bg-elev);
+            border-radius: var(--radius-sm);
+            font-size: 0.82em;
             line-height: 1.5;
         }
-        .conflict-comparison-side .preview-list .item {
+        .conflict-comparison-side .unique-tasks .item {
+            color: var(--text);
             padding: 2px 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .conflict-comparison-side.has-more h4 { color: var(--success); }
-        .conflict-comparison-side.has-less h4 { color: var(--danger); }
+        .conflict-comparison-side .unique-tasks.empty {
+            text-align: center;
+            color: var(--text-soft);
+            font-style: italic;
+            background: transparent;
+        }
+
+        /* v23: botón recomendado destacado */
+        .conflict-option.is-recommended {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .conflict-option.is-recommended::before {
+            content: "🎯 RECOMENDADO";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.66em;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .conflict-option {
+            position: relative;
+        }
 
         /* Última copia segura visible en el header */
         .last-backup-indicator {
@@ -1297,13 +1388,24 @@
         }
 
         @media (max-width: 767px) {
-            .conflict-comparison {
+            .conflict-diff-summary {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 6px;
+            }
+            .conflict-diff-summary .stat-value {
+                font-size: 1.1em;
+            }
+            .conflict-sides {
                 grid-template-columns: 1fr;
             }
             .last-backup-indicator {
                 display: none;
             }
         }
+
+        /* =================================================================
+           NUEVO v21: FILTROS MULTI-SELECT
+           ================================================================= */
 
         /* =================================================================
            NUEVO v21: FILTROS MULTI-SELECT
@@ -9026,6 +9128,20 @@
                 drive.accountEmail = cfg.accountEmail || null;
                 drive.lastSyncedAt = cfg.lastSyncedAt || null;
                 drive.lastRemoteModifiedTime = cfg.lastRemoteModifiedTime || null;
+
+                // v22 fix: restaurar token si aún es válido
+                if (cfg.token && cfg.tokenExpiresAt) {
+                    // Dejar 60s de margen antes de la expiración
+                    if (Date.now() < cfg.tokenExpiresAt - 60000) {
+                        drive.token = cfg.token;
+                        drive.tokenExpiresAt = cfg.tokenExpiresAt;
+                        drive.connected = true;
+                        console.log('[Drive] Token restaurado desde localStorage. Expira en',
+                            Math.round((cfg.tokenExpiresAt - Date.now()) / 60000), 'min');
+                    } else {
+                        console.log('[Drive] Token guardado expirado, requiere reautenticación');
+                    }
+                }
             }
         } catch (e) { console.warn('Drive config inválida:', e); }
 
@@ -9035,6 +9151,29 @@
                 drive.gsiReady = true;
                 if (drive.clientId) setupDriveTokenClient();
                 updateDriveUI();
+
+                // Si ya estamos "conectados" (token válido restaurado), iniciar polling
+                if (drive.connected) {
+                    startDrivePolling();
+                    // También hacer un sync inicial silencioso para verificar que todo OK
+                    setTimeout(() => {
+                        if (drive.connected) {
+                            driveSyncNow().catch(err => {
+                                console.warn('[Drive] Auto-sync inicial falló:', err.message);
+                                // Si falla por token inválido, requerir reauth
+                                if (err.message && err.message.includes('401')) {
+                                    drive.token = null;
+                                    drive.tokenExpiresAt = 0;
+                                    drive.connected = false;
+                                    persistDriveConfig();
+                                    updateDriveUI();
+                                    updateDriveStatus('error', 'Sesión Drive expiró', 'Vuelve a conectar Drive en Configuración');
+                                    showToast('warning', 'Drive desconectado', 'La sesión expiró. Reconecta en Configuración.');
+                                }
+                            });
+                        }
+                    }, 1500);
+                }
             } else {
                 setTimeout(waitForGSI, 300);
             }
@@ -9153,6 +9292,7 @@
                     else {
                         drive.token = resp.access_token;
                         drive.tokenExpiresAt = Date.now() + ((resp.expires_in || 3600) * 1000);
+                        persistDriveConfig(); // v22 fix: persistir el token refrescado
                         resolve();
                     }
                 };
@@ -9439,24 +9579,54 @@
     }
 
     function renderConflictComparison(remoteData, remoteFile) {
-        const localTasks = state.tasks.length;
-        const localTeam = state.team.length;
-        const localProjects = state.projects.length;
-        const localTemplates = (state.templates || []).length;
+        const localTasks = state.tasks;
+        const localTeam = state.team;
+        const localProjects = state.projects;
+        const localTemplates = state.templates || [];
 
-        const remoteTasks = (remoteData.tasks || []).length;
-        const remoteTeam = (remoteData.team || []).length;
-        const remoteProjects = (remoteData.projects || []).length;
-        const remoteTemplates = (remoteData.templates || []).length;
+        const remoteTasksArr = remoteData.tasks || [];
+        const remoteTeamArr = remoteData.team || [];
+        const remoteProjectsArr = remoteData.projects || [];
+        const remoteTemplatesArr = remoteData.templates || [];
 
-        // Diferencias
-        const taskDiff = localTasks - remoteTasks;
-        const dangerLocal = remoteTasks > localTasks && (remoteTasks - localTasks) >= 3;
-        const dangerCloud = localTasks > remoteTasks && (localTasks - remoteTasks) >= 3;
+        // Comparación REAL: cuántas tareas únicas hay en cada lado
+        // (comparando por ID o título)
+        const localIds = new Set(localTasks.map(t => t.id));
+        const remoteIds = new Set(remoteTasksArr.map(t => t.id));
+        const onlyInLocal = localTasks.filter(t => !remoteIds.has(t.id));
+        const onlyInRemote = remoteTasksArr.filter(t => !localIds.has(t.id));
+        const inBoth = localTasks.filter(t => remoteIds.has(t.id));
 
-        // Lista preview de tareas (primeras 5)
-        const localPreview = state.tasks.slice(0, 5).map(t => t.titulo).join('|');
-        const remotePreview = (remoteData.tasks || []).slice(0, 5).map(t => t.titulo).join('|');
+        const localCount = localTasks.length;
+        const remoteCount = remoteTasksArr.length;
+
+        // Determinar recomendación
+        let recommendation = null;
+        let recommendationReason = '';
+        if (onlyInLocal.length > onlyInRemote.length) {
+            recommendation = 'local';
+            recommendationReason = `LOCAL tiene <strong>${onlyInLocal.length}</strong> tarea${onlyInLocal.length === 1 ? '' : 's'} que NUBE no tiene${onlyInRemote.length > 0 ? `, pero NUBE tiene ${onlyInRemote.length} que LOCAL no tiene` : ''}.`;
+        } else if (onlyInRemote.length > onlyInLocal.length) {
+            recommendation = 'cloud';
+            recommendationReason = `NUBE tiene <strong>${onlyInRemote.length}</strong> tarea${onlyInRemote.length === 1 ? '' : 's'} que LOCAL no tiene${onlyInLocal.length > 0 ? `, pero LOCAL tiene ${onlyInLocal.length} que NUBE no tiene` : ''}.`;
+        } else if (onlyInLocal.length === 0 && onlyInRemote.length === 0) {
+            // Mismas tareas, decidir por fecha
+            const localTime = drive.lastSyncedAt ? new Date(drive.lastSyncedAt).getTime() : 0;
+            const remoteTime = remoteFile.modifiedTime ? new Date(remoteFile.modifiedTime).getTime() : 0;
+            if (localTime > remoteTime) {
+                recommendation = 'local';
+                recommendationReason = 'Las dos versiones tienen las mismas tareas, pero LOCAL es más reciente.';
+            } else {
+                recommendation = 'cloud';
+                recommendationReason = 'Las dos versiones tienen las mismas tareas, pero NUBE es más reciente.';
+            }
+        } else {
+            // Igual cantidad de tareas únicas en cada lado
+            const localTime = drive.lastSyncedAt ? new Date(drive.lastSyncedAt).getTime() : 0;
+            const remoteTime = remoteFile.modifiedTime ? new Date(remoteFile.modifiedTime).getTime() : 0;
+            recommendation = localTime > remoteTime ? 'local' : 'cloud';
+            recommendationReason = `Las dos versiones tienen el mismo número de tareas únicas. Recomendamos la más reciente.`;
+        }
 
         const localLastMod = drive.lastSyncedAt
             ? new Date(drive.lastSyncedAt).toLocaleString('es-ES')
@@ -9465,60 +9635,102 @@
             ? new Date(remoteFile.modifiedTime).toLocaleString('es-ES')
             : 'desconocida';
 
-        const sideClass = (isMore, isLess) => {
-            if (isMore) return 'has-more';
-            if (isLess) return 'has-less';
-            return '';
-        };
-
+        // Renderizar la comparación
         $('#conflictComparison').innerHTML = `
-            <div class="conflict-comparison-side ${sideClass(localTasks > remoteTasks, localTasks < remoteTasks && (remoteTasks - localTasks) >= 3)}">
-                <h4>📲 Local (este dispositivo)</h4>
-                <div class="metric"><span>Tareas:</span> <span class="value">${localTasks}</span></div>
-                <div class="metric"><span>Equipo:</span> <span class="value">${localTeam} miembro${localTeam === 1 ? '' : 's'}</span></div>
-                <div class="metric"><span>Proyectos:</span> <span class="value">${localProjects}</span></div>
-                <div class="metric"><span>Plantillas:</span> <span class="value">${localTemplates}</span></div>
-                <div class="metric"><span>Última sync:</span> <span class="value" style="font-size:0.86em;">${localLastMod}</span></div>
-                <div class="preview-list">
-                    <strong>Primeras tareas:</strong>
-                    ${state.tasks.slice(0, 5).map(t => `<div class="item">• ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('') || '<div class="item" style="font-style:italic;">Sin tareas</div>'}
+            <!-- Banner de recomendación -->
+            <div class="conflict-recommendation">
+                <div class="rec-badge">🎯 Recomendación</div>
+                <div class="rec-title">
+                    Elige: <strong>${recommendation === 'local' ? '📲 Usar versión LOCAL' : '☁️ Usar versión EN LA NUBE'}</strong>
+                </div>
+                <div class="rec-reason">${recommendationReason}</div>
+            </div>
+
+            <!-- Resumen visual de las diferencias -->
+            <div class="conflict-diff-summary">
+                <div class="diff-stat">
+                    <div class="stat-label">En común</div>
+                    <div class="stat-value common">${inBoth.length} ${inBoth.length === 1 ? 'tarea' : 'tareas'}</div>
+                </div>
+                <div class="diff-stat">
+                    <div class="stat-label">Solo en LOCAL</div>
+                    <div class="stat-value ${onlyInLocal.length > 0 ? 'unique' : ''}">${onlyInLocal.length}</div>
+                </div>
+                <div class="diff-stat">
+                    <div class="stat-label">Solo en NUBE</div>
+                    <div class="stat-value ${onlyInRemote.length > 0 ? 'unique' : ''}">${onlyInRemote.length}</div>
                 </div>
             </div>
-            <div class="conflict-comparison-side ${sideClass(remoteTasks > localTasks, remoteTasks < localTasks && (localTasks - remoteTasks) >= 3)}">
-                <h4>☁️ Nube (Google Drive)</h4>
-                <div class="metric"><span>Tareas:</span> <span class="value">${remoteTasks}</span></div>
-                <div class="metric"><span>Equipo:</span> <span class="value">${remoteTeam} miembro${remoteTeam === 1 ? '' : 's'}</span></div>
-                <div class="metric"><span>Proyectos:</span> <span class="value">${remoteProjects}</span></div>
-                <div class="metric"><span>Plantillas:</span> <span class="value">${remoteTemplates}</span></div>
-                <div class="metric"><span>Modificado:</span> <span class="value" style="font-size:0.86em;">${remoteLastMod}</span></div>
-                <div class="preview-list">
-                    <strong>Primeras tareas:</strong>
-                    ${(remoteData.tasks || []).slice(0, 5).map(t => `<div class="item">• ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('') || '<div class="item" style="font-style:italic;">Sin tareas</div>'}
+
+            <!-- Comparación side-by-side -->
+            <div class="conflict-sides">
+                <div class="conflict-comparison-side ${recommendation === 'local' ? 'recommended' : ''}">
+                    <h4>📲 Local (este dispositivo)</h4>
+                    <div class="metric"><span>Total tareas:</span> <span class="value">${localCount}</span></div>
+                    <div class="metric"><span>Equipo:</span> <span class="value">${localTeam.length} miembro${localTeam.length === 1 ? '' : 's'}</span></div>
+                    <div class="metric"><span>Proyectos:</span> <span class="value">${localProjects.length}</span></div>
+                    <div class="metric"><span>Plantillas:</span> <span class="value">${localTemplates.length}</span></div>
+                    <div class="metric"><span>Última sync:</span> <span class="value" style="font-size:0.82em;">${localLastMod}</span></div>
+                    ${onlyInLocal.length > 0 ? `
+                        <div class="unique-tasks">
+                            <strong style="color: var(--success);">Tareas únicas en LOCAL:</strong>
+                            ${onlyInLocal.slice(0, 5).map(t => `<div class="item">✓ ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('')}
+                            ${onlyInLocal.length > 5 ? `<div class="item" style="font-style:italic;">… y ${onlyInLocal.length - 5} más</div>` : ''}
+                        </div>
+                    ` : '<div class="unique-tasks empty">— Sin tareas exclusivas —</div>'}
+                </div>
+                <div class="conflict-comparison-side ${recommendation === 'cloud' ? 'recommended' : ''}">
+                    <h4>☁️ Nube (Google Drive)</h4>
+                    <div class="metric"><span>Total tareas:</span> <span class="value">${remoteCount}</span></div>
+                    <div class="metric"><span>Equipo:</span> <span class="value">${remoteTeamArr.length} miembro${remoteTeamArr.length === 1 ? '' : 's'}</span></div>
+                    <div class="metric"><span>Proyectos:</span> <span class="value">${remoteProjectsArr.length}</span></div>
+                    <div class="metric"><span>Plantillas:</span> <span class="value">${remoteTemplatesArr.length}</span></div>
+                    <div class="metric"><span>Modificado:</span> <span class="value" style="font-size:0.82em;">${remoteLastMod}</span></div>
+                    ${onlyInRemote.length > 0 ? `
+                        <div class="unique-tasks">
+                            <strong style="color: var(--success);">Tareas únicas en NUBE:</strong>
+                            ${onlyInRemote.slice(0, 5).map(t => `<div class="item">✓ ${escapeHTML(t.titulo || 'Sin título')}</div>`).join('')}
+                            ${onlyInRemote.length > 5 ? `<div class="item" style="font-style:italic;">… y ${onlyInRemote.length - 5} más</div>` : ''}
+                        </div>
+                    ` : '<div class="unique-tasks empty">— Sin tareas exclusivas —</div>'}
                 </div>
             </div>
         `;
 
-        // Warning enfático si hay riesgo grande
+        // Warning enfático solo si hay riesgo real (vas a perder tareas únicas)
         const dangerEl = $('#conflictDangerWarning');
         const dangerDetail = $('#conflictDangerDetail');
-        if (dangerLocal || dangerCloud) {
+        const willLoseLocal = onlyInLocal.length; // si eliges NUBE
+        const willLoseRemote = onlyInRemote.length; // si eliges LOCAL
+
+        if (willLoseLocal >= 3 || willLoseRemote >= 3) {
             dangerEl.style.display = 'block';
-            if (dangerLocal) {
-                dangerDetail.innerHTML = `La <strong>NUBE</strong> tiene <strong>${remoteTasks - localTasks} tareas más</strong> que tu local. Si eliges "Usar versión LOCAL", esas tareas se perderán para siempre.`;
-            } else {
-                dangerDetail.innerHTML = `Tu <strong>LOCAL</strong> tiene <strong>${localTasks - remoteTasks} tareas más</strong> que la nube. Si eliges "Usar versión EN LA NUBE", esas tareas se perderán para siempre.`;
-            }
+            const losses = [];
+            if (willLoseLocal >= 3) losses.push(`Si eliges <strong>NUBE</strong>: pierdes ${willLoseLocal} tareas únicas de LOCAL`);
+            if (willLoseRemote >= 3) losses.push(`Si eliges <strong>LOCAL</strong>: pierdes ${willLoseRemote} tareas únicas de NUBE`);
+            dangerDetail.innerHTML = losses.join('<br>');
         } else {
             dangerEl.style.display = 'none';
         }
 
-        // Badges
-        $('#conflictLocalBadge').textContent = remoteTasks >= 3
-            ? `${remoteTasks} tareas remotas se perderán`
-            : 'Sobrescribirá la nube';
-        $('#conflictCloudBadge').textContent = localTasks >= 3
-            ? `${localTasks} tareas locales se perderán`
-            : 'Reemplazará lo local';
+        // Badges en los botones — texto claro
+        $('#conflictLocalBadge').textContent = onlyInRemote.length > 0
+            ? `Perderás ${onlyInRemote.length} tarea${onlyInRemote.length === 1 ? '' : 's'} única${onlyInRemote.length === 1 ? '' : 's'} de NUBE`
+            : 'Sin pérdidas — todas las tareas se conservan';
+        $('#conflictCloudBadge').textContent = onlyInLocal.length > 0
+            ? `Perderás ${onlyInLocal.length} tarea${onlyInLocal.length === 1 ? '' : 's'} única${onlyInLocal.length === 1 ? '' : 's'} de LOCAL`
+            : 'Sin pérdidas — todas las tareas se conservan';
+
+        // Resaltar el botón recomendado
+        $('#conflictOptionLocal').classList.toggle('is-recommended', recommendation === 'local');
+        $('#conflictOptionCloud').classList.toggle('is-recommended', recommendation === 'cloud');
+
+        // Guardar para usar después en la confirmación
+        window.__conflictAnalysis = {
+            onlyInLocal: onlyInLocal.length,
+            onlyInRemote: onlyInRemote.length,
+            recommendation
+        };
     }
 
     function closeDriveConflictModal() {
@@ -9543,17 +9755,19 @@
             driveResolveConflict(choice);
             return;
         }
-        const localCount = state.tasks.length;
-        const remoteCount = (conflictRemoteData.tasks || []).length;
+        // Usar el análisis REAL de tareas únicas
+        const analysis = window.__conflictAnalysis || { onlyInLocal: 0, onlyInRemote: 0 };
         const willLose = choice === 'local'
-            ? remoteCount - localCount  // pierdes lo que estaba en nube
-            : localCount - remoteCount; // pierdes lo que estaba en local
+            ? analysis.onlyInRemote  // pierdes las únicas de la nube
+            : analysis.onlyInLocal;   // pierdes las únicas de local
 
-        if (willLose >= 3) {
-            // Riesgo alto: pedir confirmación extra
+        if (willLose >= 1) {
+            // CUALQUIER pérdida real (incluso 1 tarea) pide confirmación
+            const localCount = state.tasks.length;
+            const remoteCount = (conflictRemoteData.tasks || []).length;
             const msg = choice === 'local'
-                ? `Vas a SUBIR tu versión local que tiene <strong>${localCount} tareas</strong>, sobrescribiendo la nube que tiene <strong>${remoteCount} tareas</strong>. Perderás <strong>${willLose} tareas</strong> que están en la nube.`
-                : `Vas a DESCARGAR la versión de la nube que tiene <strong>${remoteCount} tareas</strong>, reemplazando tu local que tiene <strong>${localCount} tareas</strong>. Perderás <strong>${willLose} tareas</strong> que están en local.`;
+                ? `Vas a SUBIR tu versión local (<strong>${localCount} tareas</strong>) y sobrescribir la nube (<strong>${remoteCount} tareas</strong>).<br><br>⚠️ <strong>Perderás ${willLose} tarea${willLose === 1 ? ' única' : 's únicas'}</strong> que solo están en la nube.<br><br>Esta acción NO se puede deshacer.`
+                : `Vas a DESCARGAR la versión de la nube (<strong>${remoteCount} tareas</strong>) y reemplazar tu local (<strong>${localCount} tareas</strong>).<br><br>⚠️ <strong>Perderás ${willLose} tarea${willLose === 1 ? ' única' : 's únicas'}</strong> que solo están en local.<br><br>Esta acción NO se puede deshacer.`;
 
             $('#destructiveConfirmMsg').innerHTML = msg;
             pendingDestructiveAction = () => driveResolveConflict(choice);
@@ -9563,7 +9777,7 @@
             closeDriveConflictModal();
             setTimeout(() => $('#destructiveConfirmInput').focus(), 100);
         } else {
-            // Riesgo bajo: ejecutar directo
+            // Sin pérdidas reales: ejecutar directo
             driveResolveConflict(choice);
         }
     }
@@ -9682,7 +9896,10 @@
             fileId: drive.fileId,
             accountEmail: drive.accountEmail,
             lastSyncedAt: drive.lastSyncedAt,
-            lastRemoteModifiedTime: drive.lastRemoteModifiedTime
+            lastRemoteModifiedTime: drive.lastRemoteModifiedTime,
+            // v22 fix: persistir token y expiración para sobrevivir a recargas
+            token: drive.token,
+            tokenExpiresAt: drive.tokenExpiresAt
         }));
     }
 
