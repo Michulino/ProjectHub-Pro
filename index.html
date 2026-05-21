@@ -1366,6 +1366,278 @@
         }
 
         /* =================================================================
+           NUEVO v25: CARD "HOY" + PLANNER SEMANAL
+           ================================================================= */
+        .habits-today-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.04));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        [data-theme="dark"] .habits-today-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.06));
+        }
+        .habits-today-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .habits-today-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .habits-today-header .day-label {
+            font-size: 0.86em;
+            color: var(--text-muted);
+            text-transform: capitalize;
+        }
+        .habits-today-summary {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+        .habits-today-big {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .habits-today-big .total {
+            color: var(--text-muted);
+            font-size: 0.55em;
+            font-weight: 600;
+        }
+        .habits-today-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .habits-today-text .pct {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .habits-today-text .msg {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .habits-today-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-muted);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .habits-today-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            border-radius: 999px;
+            transition: width 600ms ease;
+        }
+        .habits-today-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .habits-today-col h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.78em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .habits-today-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px 10px;
+            margin: 0 4px 4px 0;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+        .habits-today-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .habits-today-chip.done {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .habits-today-chip.pending {
+            background: var(--bg-elev);
+            color: var(--text);
+        }
+
+        /* Planner semanal */
+        .habits-planner-card {
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .habits-planner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .habits-planner-header h3 {
+            margin: 0;
+            font-size: 1.05em;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .planner-hint {
+            font-size: 0.78em;
+            color: var(--text-muted);
+        }
+        .habits-planner-table-wrap {
+            overflow-x: auto;
+        }
+        .habits-planner-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.86em;
+        }
+        .habits-planner-table th,
+        .habits-planner-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .habits-planner-table th:first-child,
+        .habits-planner-table td:first-child {
+            text-align: left;
+            padding-left: 4px;
+            font-weight: 600;
+            color: var(--text);
+            min-width: 180px;
+        }
+        .habits-planner-table thead th {
+            font-size: 0.74em;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+        .habits-planner-table thead th.is-today {
+            color: var(--primary);
+            font-weight: 800;
+            background: var(--primary-light);
+            border-radius: 6px 6px 0 0;
+        }
+        .habits-planner-cell {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--bg-muted);
+            color: var(--text-soft);
+            cursor: pointer;
+            transition: all 150ms ease;
+            font-size: 0.9em;
+            user-select: none;
+        }
+        .habits-planner-cell:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-sm);
+        }
+        .habits-planner-cell.done {
+            background: var(--habit-cell-color, var(--success));
+            color: white;
+            font-weight: 700;
+        }
+        .habits-planner-cell.partial {
+            background: var(--habit-cell-color, var(--warning));
+            color: white;
+            opacity: 0.7;
+            font-weight: 700;
+        }
+        .habits-planner-cell.freeze {
+            background: rgba(59, 130, 246, 0.2);
+            color: #2563eb;
+        }
+        .habits-planner-cell.skip {
+            background: repeating-linear-gradient(45deg, var(--bg-muted), var(--bg-muted) 3px, var(--border) 3px, var(--border) 6px);
+            color: var(--text-muted);
+        }
+        .habits-planner-cell.future {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .habits-planner-cell.before-creation {
+            opacity: 0.15;
+            cursor: not-allowed;
+            background: transparent;
+        }
+        .habits-planner-table .habit-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .habits-planner-table .habit-info .emoji {
+            font-size: 1.1em;
+        }
+        .habits-planner-table .habit-info .streak-mini {
+            margin-left: auto;
+            font-size: 0.78em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .habits-planner-table .habit-info .streak-mini.active {
+            color: var(--warning);
+        }
+
+        @media (max-width: 767px) {
+            .habits-today-list {
+                grid-template-columns: 1fr;
+            }
+            .habits-today-big {
+                font-size: 1.8em;
+            }
+            .habits-planner-table th:first-child,
+            .habits-planner-table td:first-child {
+                min-width: 140px;
+            }
+            .habits-planner-cell {
+                width: 26px;
+                height: 26px;
+                font-size: 0.85em;
+            }
+        }
+
+        /* =================================================================
            NUEVO v24: MÓDULO DE HÁBITOS (Atomic Habits)
            ================================================================= */
 
@@ -1483,6 +1755,54 @@
             border-left: 4px solid var(--habit-color, var(--primary));
             position: relative;
             overflow: hidden;
+        }
+        /* v27: Botones de acción en cada card (Editar / Archivar / Eliminar) */
+        .habit-card-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity var(--transition);
+            z-index: 2;
+        }
+        .habit-card:hover .habit-card-actions {
+            opacity: 1;
+        }
+        @media (max-width: 767px) {
+            .habit-card-actions { opacity: 1; }
+        }
+        .habit-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .habit-action-btn svg { width: 13px; height: 13px; }
+        .habit-action-btn:hover {
+            background: var(--bg-soft);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+        .habit-action-btn.danger:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+        /* Cuando la card está completada, el badge ✓ va más a la izquierda para no chocar */
+        .habit-card.is-done-today::after {
+            top: 14px;
+            right: auto;
+            left: calc(100% - 130px);
         }
         .habit-card:hover {
             transform: translateY(-2px);
@@ -1671,6 +1991,46 @@
         .habit-mark-input:focus {
             outline: none;
             border-color: var(--primary);
+        }
+        /* v26: input grande + display de meta */
+        .habit-mark-input-lg {
+            flex: 1;
+            width: auto !important;
+            font-size: 1.4em;
+            padding: 10px 12px;
+            font-weight: 700;
+        }
+        .habit-target-display {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6px 12px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 90px;
+            transition: all var(--transition-fast);
+        }
+        .habit-target-display.achieved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
+            border-color: var(--success);
+        }
+        .habit-target-display .target-pct {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.1;
+        }
+        .habit-target-display.achieved .target-pct {
+            color: var(--success);
+        }
+        .habit-target-display.achieved .target-pct::before {
+            content: "✓ ";
+        }
+        .habit-target-display .target-meta {
+            font-size: 0.74em;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
         .habit-quick-action {
             padding: 0 10px;
@@ -5551,6 +5911,27 @@
                 </button>
             </div>
 
+            <!-- v25: Card "HOY" - resumen del día actual -->
+            <div class="habits-today-card" id="habitsTodayCard">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- v25: Planner semanal (tabla) -->
+            <div class="habits-planner-card">
+                <div class="habits-planner-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--primary);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Planner semanal
+                    </h3>
+                    <span class="planner-hint">Click en cualquier celda para marcar/desmarcar</span>
+                </div>
+                <div class="habits-planner-table-wrap">
+                    <table class="habits-planner-table" id="habitsPlannerTable">
+                        <!-- Se llena dinámicamente -->
+                    </table>
+                </div>
+            </div>
+
             <!-- v24+: Gráfico de performance de hábitos -->
             <div class="habits-performance-card">
                 <div class="habits-performance-header">
@@ -5693,6 +6074,14 @@
                 <!-- Se llena dinámicamente -->
             </div>
             <div class="modal-footer">
+                <button class="btn btn-danger" onclick="deleteHabitFromDetail()" style="margin-right: auto;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Eliminar
+                </button>
+                <button class="btn btn-ghost" id="habitDetailArchiveBtn" onclick="archiveHabitFromDetail()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                    Archivar
+                </button>
                 <button class="btn btn-secondary" onclick="closeHabitDetailModal()">Cerrar</button>
                 <button class="btn btn-primary" id="habitDetailEditBtn" onclick="editHabitFromDetail()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -11042,6 +11431,78 @@
     }
 
     /* === ID generator === */
+    /* === Hábitos pre-cargados del cuaderno del usuario === */
+    const SEED_HABITS = [
+        {
+            id: 'H001', name: 'Dormir 8 horas', emoji: '😴', color: '#8b5cf6',
+            category: 'Salud', type: 'binary', target: null, unit: null,
+            cue: 'A las 9pm sin pantallas, listo para descansar',
+            why: 'Despertar con energía y enfoque al día siguiente',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H002', name: 'Levantarse temprano', emoji: '☀️', color: '#f59e0b',
+            category: 'Productividad', type: 'binary', target: null, unit: null,
+            cue: 'Despertador sin snooze, pies fuera de la cama',
+            why: 'Ganarle al día y tener tiempo para mí antes del trabajo',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H003', name: 'Ejercitarse 25 min', emoji: '🏃', color: '#ef4444',
+            category: 'Salud', type: 'quantity', target: 25, unit: 'min',
+            cue: 'Apenas me levante, ropa deportiva lista',
+            why: 'Mejor físico, más energía, mejor humor',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H004', name: 'Estudiar SAP 1 hora', emoji: '💼', color: '#3b82f6',
+            category: 'Aprendizaje', type: 'quantity', target: 60, unit: 'min',
+            cue: 'Después del desayuno, en mi escritorio',
+            why: 'Mejorar mi perfil profesional y conocimiento técnico',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H005', name: 'Meditar 5 min', emoji: '🧘', color: '#10b981',
+            category: 'Mente', type: 'quantity', target: 5, unit: 'min',
+            cue: 'Antes de empezar a trabajar, audio guía + respiración',
+            why: 'Reducir ansiedad y empezar el día con calma',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H006', name: 'Leer 30 min', emoji: '📚', color: '#ec4899',
+            category: 'Aprendizaje', type: 'quantity', target: 30, unit: 'min',
+            cue: 'Antes de dormir o después del almuerzo',
+            why: 'Aprender algo nuevo y apuntar 1 idea clave por sesión',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H007', name: 'Beber 2L de agua', emoji: '💧', color: '#06b6d4',
+            category: 'Salud', type: 'quantity', target: 8, unit: 'vasos',
+            cue: 'Botella siempre cerca, primer vaso al despertar',
+            why: 'Mejor digestión, hidratación, salud general',
+            createdAt: new Date().toISOString(), archived: false
+        },
+        {
+            id: 'H008', name: 'Planear el día 10 min', emoji: '📝', color: '#84cc16',
+            category: 'Productividad', type: 'quantity', target: 10, unit: 'min',
+            cue: 'En la mañana: lista; en la noche: revisión',
+            why: 'Tener dirección clara y trabajar enfocado',
+            createdAt: new Date().toISOString(), archived: false
+        }
+    ];
+
+    /* === Cargar hábitos seed si el usuario nunca creó ninguno === */
+    function seedHabitsIfNeeded() {
+        // Solo si el usuario no tiene hábitos Y no ha marcado nunca "no quiero seed"
+        const skipSeed = localStorage.getItem('projecthub_skip_habit_seed');
+        if (state.habits.length === 0 && !skipSeed) {
+            state.habits = JSON.parse(JSON.stringify(SEED_HABITS));
+            saveToStorage();
+            return true;
+        }
+        return false;
+    }
+
     function generateHabitId() {
         const nums = state.habits
             .map(h => parseInt(String(h.id).replace(/\D/g, ''), 10))
@@ -11544,9 +12005,15 @@
         $('#tasksView').classList.toggle('hidden', module !== 'tasks');
         $('#habitsView').classList.toggle('hidden', module !== 'habits');
         if (module === 'habits') {
+            // Si es primera vez (sin hábitos creados), precargar los del cuaderno
+            const wasSeeded = seedHabitsIfNeeded();
+            if (wasSeeded) {
+                showToast('success', '🌱 Hábitos precargados', `Se crearon ${SEED_HABITS.length} hábitos del cuaderno.`);
+            }
             renderHabits();
             renderHabitsDashboard();
-            renderHabitsChart();
+            renderHabitsPlanner();
+            renderHabitsTrend();
         }
     }
 
@@ -11574,10 +12041,214 @@
         });
         $('#habitsAdherence').textContent = count > 0 ? `${Math.round(totalAdh / count)}%` : '0%';
 
+        // Renderizar también la card de HOY
+        renderHabitsTodayCard();
+
         // v24+: redibujar gráfico si está visible
         if (state.currentModule === 'habits' && typeof renderHabitsChart === 'function') {
             renderHabitsChart();
         }
+    }
+
+    /* v25: Alias para compatibilidad con setModule */
+    function renderHabitsTrend() {
+        if (typeof renderHabitsChart === 'function') renderHabitsChart();
+    }
+
+    /* v25: Card "HOY" - resumen visual del día actual */
+    function renderHabitsTodayCard() {
+        const card = $('#habitsTodayCard');
+        if (!card) return;
+
+        const active = state.habits.filter(h => !h.archived);
+        if (active.length === 0) {
+            card.style.display = 'none';
+            return;
+        }
+        card.style.display = 'block';
+
+        const today = todayKey();
+        const done = active.filter(h => isHabitDone(h, today));
+        const pending = active.filter(h => !isHabitDone(h, today) && getLog(h.id, today) !== 'skip');
+        const skipped = active.filter(h => getLog(h.id, today) === 'skip');
+
+        const pct = active.length > 0 ? Math.round((done.length / active.length) * 100) : 0;
+        const dateLabel = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+
+        // Mensaje motivacional según porcentaje
+        let msg = '';
+        if (active.length === 0) msg = 'Crea tu primer hábito para empezar';
+        else if (done.length === active.length) msg = '🎉 ¡Día perfecto! Has cumplido todos tus hábitos.';
+        else if (pct >= 75) msg = `💪 Vas muy bien — solo faltan ${pending.length} hábito${pending.length === 1 ? '' : 's'} para cerrar el día perfecto.`;
+        else if (pct >= 50) msg = `✨ Buen ritmo — ya completaste más de la mitad. Sigue.`;
+        else if (pct > 0) msg = `🌱 Buen comienzo. Faltan ${pending.length} para completar.`;
+        else msg = `⏰ Aún no has marcado nada. Empieza por el más fácil — Regla de los 2 minutos.`;
+
+        const chip = (h, state) => `
+            <button class="habits-today-chip ${state}" onclick="toggleHabitToday('${h.id}')" title="Click para ${state === 'done' ? 'desmarcar' : 'marcar como hecho'}">
+                <span>${h.emoji}</span>
+                <span>${escapeHTML(h.name)}</span>
+            </button>
+        `;
+
+        card.innerHTML = `
+            <div class="habits-today-header">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; color: var(--primary);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    HOY
+                </h3>
+                <span class="day-label">${dateLabel}</span>
+            </div>
+            <div class="habits-today-summary">
+                <div class="habits-today-big">
+                    ${done.length}<span class="total">/${active.length}</span>
+                </div>
+                <div class="habits-today-text">
+                    <div class="pct">${pct}% cumplido hoy</div>
+                    <div class="msg">${msg}</div>
+                </div>
+            </div>
+            <div class="habits-today-progress-bar">
+                <div class="habits-today-progress-fill" style="width: ${pct}%;"></div>
+            </div>
+            <div class="habits-today-list">
+                <div class="habits-today-col">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:var(--success);"><polyline points="20 6 9 17 4 12"/></svg>
+                        Completados (${done.length})
+                    </h4>
+                    <div>
+                        ${done.length === 0 ? '<span style="font-size:0.85em;color:var(--text-soft);font-style:italic;">— aún ninguno —</span>' : done.map(h => chip(h, 'done')).join('')}
+                    </div>
+                </div>
+                <div class="habits-today-col">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:var(--warning);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Pendientes (${pending.length})${skipped.length > 0 ? ` <span style="font-weight: 400; color: var(--text-soft);">· ${skipped.length} ⏭ saltado${skipped.length === 1 ? '' : 's'}</span>` : ''}
+                    </h4>
+                    <div>
+                        ${pending.length === 0 && skipped.length === 0 ? '<span style="font-size:0.85em;color:var(--success);font-weight:600;">🎉 ¡Todos completados!</span>' : pending.map(h => chip(h, 'pending')).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /* v25: Planner semanal — tabla con últimos 7 días */
+    function renderHabitsPlanner() {
+        const table = $('#habitsPlannerTable');
+        if (!table) return;
+
+        const active = state.habits.filter(h => !h.archived);
+        if (active.length === 0) {
+            table.parentElement.parentElement.style.display = 'none';
+            return;
+        }
+        table.parentElement.parentElement.style.display = '';
+
+        // Últimos 7 días (de más antiguo a hoy)
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = daysAgo(i);
+            days.push({ date: d, key: ymd(d), isToday: i === 0 });
+        }
+
+        const dayLabels = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+        // Header
+        let headerHTML = '<thead><tr><th>Hábito</th>';
+        days.forEach(({ date, isToday }) => {
+            const wd = dayLabels[date.getDay()];
+            const dnum = date.getDate();
+            headerHTML += `<th class="${isToday ? 'is-today' : ''}" title="${date.toLocaleDateString('es-ES')}">${isToday ? 'HOY' : wd}<br><span style="font-weight:400;font-size:0.9em;">${dnum}</span></th>`;
+        });
+        headerHTML += '<th style="text-align:right;">Racha</th></tr></thead>';
+
+        // Filas (1 por hábito)
+        let bodyHTML = '<tbody>';
+        active.forEach(h => {
+            const streak = calculateStreak(h);
+            const created = new Date(h.createdAt);
+            bodyHTML += `<tr>
+                <td>
+                    <div class="habit-info">
+                        <span class="emoji">${h.emoji}</span>
+                        <span style="cursor:pointer;" onclick="openHabitDetail('${h.id}')">${escapeHTML(h.name)}</span>
+                    </div>
+                </td>`;
+            days.forEach(({ date, key, isToday }) => {
+                if (date < created) {
+                    bodyHTML += `<td><span class="habits-planner-cell before-creation" title="Antes de crear el hábito">—</span></td>`;
+                    return;
+                }
+                const log = getLog(h.id, key);
+                const done = isHabitDone(h, key);
+                const partial = isHabitPartial(h, key);
+                let cls = 'habits-planner-cell';
+                let label = '';
+                let title = date.toLocaleDateString('es-ES');
+                if (log === 'skip') {
+                    cls += ' skip';
+                    label = '⏭';
+                    title += ': Saltado';
+                } else if (done) {
+                    cls += ' done';
+                    label = '✓';
+                    title += `: Cumplido${h.type === 'quantity' && typeof log === 'number' ? ` (${log}${h.unit || ''})` : ''}`;
+                } else if (partial) {
+                    cls += ' partial';
+                    label = typeof log === 'number' ? String(log) : '~';
+                    title += `: Parcial (${log}/${h.target}${h.unit || ''})`;
+                } else {
+                    label = '·';
+                    title += ': Sin registrar';
+                }
+                bodyHTML += `<td><span class="${cls}" style="--habit-cell-color: ${h.color};" onclick="toggleHabitOnDate('${h.id}','${key}')" title="${title}">${label}</span></td>`;
+            });
+            const streakIcon = streak.freeze ? '🧊' : (streak.current > 0 ? '🔥' : '·');
+            bodyHTML += `<td style="text-align:right;">
+                <span class="streak-mini ${streak.current > 0 ? 'active' : ''}">${streakIcon} ${streak.current}d</span>
+            </td>`;
+            bodyHTML += '</tr>';
+        });
+        bodyHTML += '</tbody>';
+
+        table.innerHTML = headerHTML + bodyHTML;
+    }
+
+    /* v25: Toggle de un hábito en una fecha específica (desde el planner) */
+    function toggleHabitOnDate(habitId, dateKey) {
+        const h = state.habits.find(x => x.id === habitId);
+        if (!h) return;
+        // No permitir editar fechas futuras
+        const targetDate = new Date(dateKey);
+        const today = new Date();
+        if (targetDate > today) {
+            showToast('warning', 'Fecha futura', 'No puedes marcar un día que aún no ha llegado.');
+            return;
+        }
+        // No permitir antes de creación
+        if (targetDate < new Date(h.createdAt)) {
+            showToast('warning', 'Antes de crear el hábito', 'Ese día el hábito todavía no existía.');
+            return;
+        }
+
+        const current = getLog(habitId, dateKey);
+        if (h.type === 'binary') {
+            const wasDone = current === true;
+            setLog(habitId, dateKey, wasDone ? null : true);
+        } else {
+            // Cuantitativo: toggle entre 0 y target
+            if (typeof current === 'number' && current >= h.target) {
+                setLog(habitId, dateKey, null);
+            } else {
+                setLog(habitId, dateKey, h.target);
+            }
+        }
+        saveToStorage();
+        renderHabits();
+        renderHabitsDashboard();
+        renderHabitsPlanner();
     }
 
     function renderHabits() {
@@ -11645,13 +12316,22 @@
                     </button>
                 `;
             } else {
+                // Cuantitativo: solo input manual + label de meta
                 const currentVal = typeof todayLog === 'number' ? todayLog : 0;
+                const pctOfTarget = h.target > 0 ? Math.min(100, Math.round((currentVal / h.target) * 100)) : 0;
                 markButton = `
-                    <input type="number" min="0" class="habit-mark-input" value="${currentVal}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); setHabitQuantity('${h.id}', this.value)" title="Cantidad de hoy">
-                    <button class="habit-mark-btn ${done ? 'done' : ''}" onclick="event.stopPropagation(); incrementHabit('${h.id}')" title="Sumar 1">
-                        +1
-                        <span style="opacity: 0.85; font-size: 0.82em;">/ ${h.target}${h.unit || ''}</span>
-                    </button>
+                    <div style="flex: 1; display: flex; gap: 8px; align-items: stretch;">
+                        <input type="number" min="0" max="9999" class="habit-mark-input habit-mark-input-lg"
+                            value="${currentVal}"
+                            placeholder="0"
+                            onclick="event.stopPropagation()"
+                            onchange="event.stopPropagation(); setHabitQuantity('${h.id}', this.value)"
+                            title="Escribe la cantidad de hoy">
+                        <div class="habit-target-display ${done ? 'achieved' : ''}" title="Meta diaria">
+                            <span class="target-pct">${pctOfTarget}%</span>
+                            <span class="target-meta">de ${h.target} ${escapeHTML(h.unit || '')}</span>
+                        </div>
+                    </div>
                 `;
             }
 
@@ -11659,6 +12339,17 @@
                 <div class="habit-card ${done ? 'is-done-today' : ''} ${h.archived ? 'archived' : ''}"
                      style="--habit-color: ${h.color};"
                      onclick="openHabitDetail('${h.id}')">
+                    <div class="habit-card-actions" onclick="event.stopPropagation()">
+                        <button class="habit-action-btn" onclick="event.stopPropagation(); openHabitModal(state.habits.find(x => x.id === '${h.id}'))" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="habit-action-btn" onclick="event.stopPropagation(); quickArchiveHabit('${h.id}')" title="${h.archived ? 'Reactivar' : 'Archivar'}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                        </button>
+                        <button class="habit-action-btn danger" onclick="event.stopPropagation(); quickDeleteHabit('${h.id}')" title="Eliminar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
                     <div class="habit-header">
                         <div class="habit-emoji">${h.emoji}</div>
                         <div class="habit-title-block">
@@ -11716,6 +12407,7 @@
         saveToStorage();
         renderHabits();
         renderHabitsDashboard();
+        renderHabitsPlanner();
     }
 
     function incrementHabit(habitId) {
@@ -11731,6 +12423,7 @@
         saveToStorage();
         renderHabits();
         renderHabitsDashboard();
+        renderHabitsPlanner();
     }
 
     function setHabitQuantity(habitId, value) {
@@ -11745,6 +12438,7 @@
         saveToStorage();
         renderHabits();
         renderHabitsDashboard();
+        renderHabitsPlanner();
     }
 
     function markHabitSkip(habitId) {
@@ -11760,6 +12454,7 @@
         saveToStorage();
         renderHabits();
         renderHabitsDashboard();
+        renderHabitsPlanner();
     }
 
     /* === Celebración al alcanzar hito === */
@@ -11926,6 +12621,7 @@
                 closeHabitModal();
                 renderHabits();
                 renderHabitsDashboard();
+                renderHabitsPlanner();
                 showToast('success', 'Hábito eliminado', '');
             }
         );
@@ -11939,7 +12635,51 @@
         closeHabitModal();
         renderHabits();
         renderHabitsDashboard();
+        renderHabitsPlanner();
         showToast('info', h.archived ? '📦 Archivado' : '🔓 Reactivado', h.name);
+    }
+
+    /* v27: Versiones "rápidas" llamadas directamente desde las cards
+       (no requieren abrir modal de edición primero) */
+    function quickDeleteHabit(habitId) {
+        const h = state.habits.find(x => x.id === habitId);
+        if (!h) return;
+        // Calcular qué historial vamos a perder
+        const logs = state.habitLogs[habitId] || {};
+        const logCount = Object.keys(logs).length;
+        const stats = getHabitStats(h);
+
+        const detail = `
+            <p style="margin: 0 0 10px 0;">¿Eliminar <strong>"${escapeHTML(h.name)}"</strong> y TODO su historial?</p>
+            <div style="background: var(--bg-muted); padding: 10px 12px; border-radius: var(--radius); font-size: 0.88em; margin: 10px 0;">
+                <div>📅 Registros guardados: <strong>${logCount} días</strong></div>
+                <div>🔥 Racha actual: <strong>${stats.currentStreak} ${stats.currentStreak === 1 ? 'día' : 'días'}</strong></div>
+                <div>🏆 Mejor racha: <strong>${stats.bestStreak} ${stats.bestStreak === 1 ? 'día' : 'días'}</strong></div>
+                <div>✓ Total cumplimientos: <strong>${stats.totalChecks}</strong></div>
+            </div>
+            <p style="color: var(--danger); font-size: 0.88em; margin: 0;">⚠️ Esta acción NO se puede deshacer.</p>
+            <p style="font-size: 0.85em; color: var(--text-muted); margin: 6px 0 0 0;">💡 Si solo quieres pausar, mejor archiva (icono 📦).</p>
+        `;
+        openConfirmModal('Eliminar hábito', detail, () => {
+            state.habits = state.habits.filter(x => x.id !== habitId);
+            delete state.habitLogs[habitId];
+            saveToStorage();
+            renderHabits();
+            renderHabitsDashboard();
+            renderHabitsPlanner();
+            showToast('success', '🗑 Hábito eliminado', h.name);
+        });
+    }
+
+    function quickArchiveHabit(habitId) {
+        const h = state.habits.find(x => x.id === habitId);
+        if (!h) return;
+        h.archived = !h.archived;
+        saveToStorage();
+        renderHabits();
+        renderHabitsDashboard();
+        renderHabitsPlanner();
+        showToast('info', h.archived ? '📦 Archivado' : '🔓 Reactivado', `"${h.name}" — ${h.archived ? 'no aparece en la lista activa' : 'vuelve a contar'}`);
     }
 
     /* === Modal de detalle === */
@@ -12012,6 +12752,13 @@
                 Creado: ${new Date(h.createdAt).toLocaleDateString('es-ES')} · ${stats.daysSinceStart} ${stats.daysSinceStart === 1 ? 'día' : 'días'} desde el inicio
             </p>
         `;
+        // v27: Actualizar texto del botón archivar según estado
+        const archBtn = $('#habitDetailArchiveBtn');
+        if (archBtn) {
+            archBtn.innerHTML = h.archived
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg> Reactivar'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Archivar';
+        }
         $('#habitDetailModal').classList.add('show');
     }
 
@@ -12024,6 +12771,21 @@
         const h = state.habits.find(x => x.id === currentDetailHabitId);
         closeHabitDetailModal();
         if (h) openHabitModal(h);
+    }
+
+    /* v27: Eliminar y archivar desde el modal de detalle */
+    function deleteHabitFromDetail() {
+        if (!currentDetailHabitId) return;
+        const id = currentDetailHabitId;
+        closeHabitDetailModal();
+        quickDeleteHabit(id);
+    }
+
+    function archiveHabitFromDetail() {
+        if (!currentDetailHabitId) return;
+        const id = currentDetailHabitId;
+        closeHabitDetailModal();
+        quickArchiveHabit(id);
     }
 
     /* === Exportar informe === */
@@ -12243,7 +13005,11 @@
         toggleHabitToday, incrementHabit, setHabitQuantity, markHabitSkip,
         exportHabitsReport, renderHabits, renderHabitsDashboard,
         // v24+ — Gráfico
-        renderHabitsChart, toggleChartHabit, toggleChartAverage
+        renderHabitsChart, toggleChartHabit, toggleChartAverage,
+        // v25 — Card hoy + Planner semanal
+        renderHabitsPlanner, renderHabitsTodayCard, renderHabitsTrend, toggleHabitOnDate,
+        // v27 — Quick actions desde cards y detalle
+        quickDeleteHabit, quickArchiveHabit, deleteHabitFromDetail, archiveHabitFromDetail
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
