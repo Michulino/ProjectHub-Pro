@@ -403,6 +403,179 @@
 
         .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
+        /* =================================================================
+           NUEVO v28: WIDGETS CLICKEABLES (KPIs + Proyectos + Personas)
+           ================================================================= */
+        .clickable-kpi {
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            user-select: none;
+        }
+        .clickable-kpi:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        .clickable-kpi:active {
+            transform: translateY(-1px);
+        }
+        .clickable-kpi.active-filter {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            background: linear-gradient(135deg, var(--primary-light), transparent);
+        }
+        .clickable-kpi.active-filter::after {
+            content: "✓";
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop-in 250ms cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Hint visual sutil al hover */
+        .clickable-kpi::before {
+            content: "→";
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 1em;
+            color: var(--text-soft);
+            opacity: 0;
+            transition: all 200ms ease;
+            pointer-events: none;
+        }
+        .clickable-kpi:hover:not(.active-filter)::before {
+            opacity: 0.5;
+            transform: translateX(2px);
+        }
+
+        /* Workload (carga por persona) clickeable */
+        .workload-row.clickable-row {
+            cursor: pointer;
+            padding: 6px 8px;
+            margin: 0 -8px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        .workload-row.clickable-row:hover {
+            background: var(--primary-light);
+        }
+        .workload-row.clickable-row.active-filter {
+            background: var(--primary-light);
+            box-shadow: inset 3px 0 0 var(--primary);
+        }
+        .workload-row.clickable-row.active-filter .name {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Bar chart (proyectos) clickeable */
+        .bar-row.clickable-row {
+            cursor: pointer;
+            padding: 4px 8px;
+            margin: 0 -8px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        .bar-row.clickable-row:hover {
+            background: var(--primary-light);
+        }
+        .bar-row.clickable-row.active-filter {
+            background: var(--primary-light);
+            box-shadow: inset 3px 0 0 var(--primary);
+        }
+        .bar-row.clickable-row.active-filter .label {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Animación de filtrado en filas de tabla */
+        .task-row-fade-out {
+            animation: fade-collapse 300ms ease forwards;
+        }
+        @keyframes fade-collapse {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-20px); }
+        }
+        .task-row-fade-in {
+            animation: fade-in-task 300ms ease forwards;
+        }
+        @keyframes fade-in-task {
+            0% { opacity: 0; transform: translateY(-4px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mensaje "sin resultados" mejorado */
+        .empty-with-filters {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--bg-elev);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            margin: 16px 0;
+        }
+        .empty-with-filters .icon {
+            font-size: 2.5em;
+            opacity: 0.5;
+            margin-bottom: 10px;
+        }
+        .empty-with-filters h3 {
+            color: var(--text);
+            margin: 0 0 6px 0;
+            font-size: 1em;
+        }
+        .empty-with-filters p {
+            color: var(--text-muted);
+            margin: 0 0 14px 0;
+            font-size: 0.9em;
+        }
+
+        /* Mini badge "Esc para limpiar" */
+        .esc-hint {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: var(--text);
+            color: var(--bg);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.78em;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 300ms ease;
+            pointer-events: none;
+        }
+        .esc-hint.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .esc-hint kbd {
+            background: var(--bg);
+            color: var(--text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.85em;
+            margin: 0 2px;
+        }
+
         .kpi-icon {
             width: 42px;
             height: 42px;
@@ -5729,7 +5902,7 @@
 
             <!-- Sidebar -->
             <aside class="sidebar">
-                <div class="kpi-card pendientes">
+                <div class="kpi-card pendientes clickable-kpi" onclick="filterFromWidget('estado', ['Pendiente'])" title="Click para filtrar tareas Pendientes">
                     <div class="kpi-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
@@ -5739,7 +5912,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card progreso">
+                <div class="kpi-card progreso clickable-kpi" onclick="filterFromWidget('estado', ['En progreso'])" title="Click para filtrar tareas En Progreso">
                     <div class="kpi-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                     </div>
@@ -5749,7 +5922,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card completadas">
+                <div class="kpi-card completadas clickable-kpi" onclick="filterFromWidget('tab', 'completed')" title="Click para ver tareas Completadas">
                     <div class="kpi-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     </div>
@@ -5759,7 +5932,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card avance">
+                <div class="kpi-card avance clickable-kpi" onclick="showAvanceBreakdown()" title="Click para ver desglose de avance">
                     <div class="progress-ring" aria-hidden="true">
                         <svg viewBox="0 0 42 42">
                             <circle class="track" cx="21" cy="21" r="18"/>
@@ -5772,7 +5945,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card revisadas-hoy">
+                <div class="kpi-card revisadas-hoy clickable-kpi" onclick="filterFromWidget('revision', ['today'])" title="Click para filtrar tareas Revisadas Hoy">
                     <div class="kpi-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     </div>
@@ -5782,7 +5955,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card pendientes-rev">
+                <div class="kpi-card pendientes-rev clickable-kpi" onclick="filterFromWidget('revision', ['pending'])" title="Click para filtrar tareas Por Revisar">
                     <div class="kpi-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
@@ -7154,6 +7327,177 @@
         state.filters.revision = [];
         updateFilterVisuals();
         renderTasks();
+        // v28: re-render widgets para quitar resaltado
+        if (typeof renderWorkload === 'function') renderWorkload();
+        if (typeof renderProjectChart === 'function') renderProjectChart();
+        if (typeof updateKpiActiveStates === 'function') updateKpiActiveStates();
+        if (typeof hideEscHint === 'function') hideEscHint();
+    }
+
+    /* ===================================================================
+       NUEVO v28: FILTRADO DESDE WIDGETS (KPIs / Proyectos / Personas)
+       Single-mode: cada click reemplaza todos los filtros anteriores.
+       Click otra vez en el mismo = limpia el filtro.
+       =================================================================== */
+    function filterFromWidget(filterType, values) {
+        // Caso especial: cambio de tab a "Completadas"
+        if (filterType === 'tab') {
+            state.taskTab = values;
+            if (typeof setTaskTab === 'function') {
+                setTaskTab(values);
+            } else {
+                // Fallback: actualizar manual
+                const tabActivas = document.getElementById('tabActivas');
+                const tabCompletadas = document.getElementById('tabCompletadas');
+                if (tabActivas && tabCompletadas) {
+                    tabActivas.classList.toggle('active', values === 'active');
+                    tabCompletadas.classList.toggle('active', values === 'completed');
+                }
+                // Limpiar otros filtros, mostrar todo en ese tab
+                clearFilters();
+                state.taskTab = values;
+                renderTasks();
+            }
+            showToast('info', '📋 Vista cambiada', values === 'completed' ? 'Mostrando tareas completadas' : 'Mostrando tareas activas');
+            updateKpiActiveStates();
+            return;
+        }
+
+        // Caso normal: filtrar
+        // Verificar si el filtro ya está activo con exactamente esos valores
+        const current = Array.isArray(state.filters[filterType]) ? state.filters[filterType] : [];
+        const sameValues = current.length === values.length && current.every(v => values.includes(v));
+
+        // Limpiar TODOS los filtros previos (single-mode)
+        $('#searchInput').value = '';
+        state.filters.search = '';
+        state.filters.proyecto = [];
+        state.filters.responsable = [];
+        state.filters.prioridad = [];
+        state.filters.estado = [];
+        state.filters.revision = [];
+
+        // Si ya estaba activo el MISMO filtro → solo limpiar (toggle)
+        if (sameValues) {
+            updateFilterVisuals();
+            renderTasks();
+            renderWorkload();
+            renderProjectChart();
+            updateKpiActiveStates();
+            hideEscHint();
+            showToast('info', '🔄 Filtros limpiados', '');
+            return;
+        }
+
+        // Aplicar el nuevo filtro
+        if (state.filters.hasOwnProperty(filterType)) {
+            state.filters[filterType] = values;
+        }
+
+        // Si estamos en tab "Completadas" y el filtro es de estado activo, cambiar a "Activas"
+        if (state.taskTab === 'completed' && filterType === 'estado') {
+            state.taskTab = 'active';
+            const tabActivas = document.getElementById('tabActivas');
+            const tabCompletadas = document.getElementById('tabCompletadas');
+            if (tabActivas && tabCompletadas) {
+                tabActivas.classList.add('active');
+                tabCompletadas.classList.remove('active');
+            }
+        }
+
+        updateFilterVisuals();
+        renderTasks();
+        renderWorkload();
+        renderProjectChart();
+        updateKpiActiveStates();
+        showEscHint();
+
+        // Toast informativo
+        const labelMap = {
+            estado: 'Estado',
+            proyecto: 'Proyecto',
+            responsable: 'Responsable',
+            prioridad: 'Prioridad',
+            revision: 'Revisión'
+        };
+        let valueLabel = values.join(', ');
+        if (filterType === 'responsable') {
+            valueLabel = values.map(v => {
+                if (v === '__unassigned__') return 'Sin asignar';
+                const m = state.team.find(x => x.id === v);
+                return m ? m.nombre : v;
+            }).join(', ');
+        }
+        if (filterType === 'revision') {
+            const revMap = { today: 'Revisadas hoy', pending: 'Pendientes de revisar', stale: 'Sin revisar +7d', never: 'Nunca revisadas' };
+            valueLabel = values.map(v => revMap[v] || v).join(', ');
+        }
+        showToast('info', '🔍 Filtro aplicado', `${labelMap[filterType] || filterType}: ${valueLabel}`);
+    }
+
+    /* Marca los KPI cards activos según los filtros actuales */
+    function updateKpiActiveStates() {
+        const cards = document.querySelectorAll('.clickable-kpi');
+        if (!cards.length) return;
+
+        const estado = Array.isArray(state.filters.estado) ? state.filters.estado : [];
+        const revision = Array.isArray(state.filters.revision) ? state.filters.revision : [];
+
+        cards.forEach(card => card.classList.remove('active-filter'));
+
+        // Pendientes
+        if (estado.length === 1 && estado[0] === 'Pendiente') {
+            document.querySelector('.kpi-card.pendientes')?.classList.add('active-filter');
+        }
+        // En progreso
+        if (estado.length === 1 && estado[0] === 'En progreso') {
+            document.querySelector('.kpi-card.progreso')?.classList.add('active-filter');
+        }
+        // Completadas (cuando tab es 'completed')
+        if (state.taskTab === 'completed') {
+            document.querySelector('.kpi-card.completadas')?.classList.add('active-filter');
+        }
+        // Revisadas hoy
+        if (revision.length === 1 && revision[0] === 'today') {
+            document.querySelector('.kpi-card.revisadas-hoy')?.classList.add('active-filter');
+        }
+        // Pendientes de revisión
+        if (revision.length === 1 && revision[0] === 'pending') {
+            document.querySelector('.kpi-card.pendientes-rev')?.classList.add('active-filter');
+        }
+    }
+
+    /* Muestra modal con desglose de avance */
+    function showAvanceBreakdown() {
+        const total = state.tasks.length;
+        if (total === 0) {
+            showToast('info', '📊 Sin tareas', 'Crea tareas para ver el avance.');
+            return;
+        }
+        const completadas = state.tasks.filter(t => isStateDone(t.estado)).length;
+        const pendientes = state.tasks.filter(t => t.estado === 'Pendiente').length;
+        const progreso = state.tasks.filter(t => t.estado === 'En progreso').length;
+        const hold = state.tasks.filter(t => t.estado === 'Hold').length;
+        const otros = total - completadas - pendientes - progreso - hold;
+        const pct = Math.round((completadas / total) * 100);
+
+        showToast('success', `📊 Avance: ${pct}%`,
+            `${completadas}/${total} completadas · ${progreso} en progreso · ${pendientes} pendientes${hold ? ' · ' + hold + ' en hold' : ''}${otros > 0 ? ' · ' + otros + ' otros' : ''}`);
+    }
+
+    /* Hint visual "Esc para limpiar" */
+    let _escHintEl = null;
+    function showEscHint() {
+        if (!_escHintEl) {
+            _escHintEl = document.createElement('div');
+            _escHintEl.className = 'esc-hint';
+            _escHintEl.innerHTML = 'Presiona <kbd>Esc</kbd> para limpiar filtros';
+            document.body.appendChild(_escHintEl);
+        }
+        setTimeout(() => _escHintEl.classList.add('show'), 50);
+    }
+    function hideEscHint() {
+        if (_escHintEl) _escHintEl.classList.remove('show');
     }
 
     /* Quitar UN filtro: si se pasa solo el nombre, limpia todo el array.
@@ -7173,6 +7517,10 @@
         }
         updateFilterVisuals();
         renderTasks();
+        // v28: re-render widgets para sincronizar resaltados
+        if (typeof renderWorkload === 'function') renderWorkload();
+        if (typeof renderProjectChart === 'function') renderProjectChart();
+        if (typeof updateKpiActiveStates === 'function') updateKpiActiveStates();
     }
 
     /* Actualiza visuales (chips + botones de filtro en headers + botón "Limpiar") */
@@ -7241,6 +7589,8 @@
 
         // Renderizar chips
         renderActiveFilterChips();
+        // v28: actualizar estados activos de KPIs
+        if (typeof updateKpiActiveStates === 'function') updateKpiActiveStates();
     }
 
     function renderActiveFilterChips() {
@@ -8209,11 +8559,17 @@
             container.innerHTML = '<div style="text-align: center; color: var(--text-soft); font-size: 0.85em; padding: 8px;">Sin tareas activas</div>';
             return;
         }
+        // v28: helper para saber si está activo el filtro de este proyecto
+        const activeProj = Array.isArray(state.filters.proyecto) ? state.filters.proyecto : [];
+        const isActive = (proj) => activeProj.length === 1 && activeProj[0] === proj;
+
         const max = Math.max(...entries.map(e => e[1]));
         container.innerHTML = entries.map(([proj, c]) => {
             const pct = (c / max) * 100;
             return `
-                <div class="bar-row" title="${escapeHTML(proj)}: ${c} tarea${c === 1 ? '' : 's'} activa${c === 1 ? '' : 's'}">
+                <div class="bar-row clickable-row ${isActive(proj) ? 'active-filter' : ''}"
+                     onclick="filterFromWidget('proyecto', ['${escapeHTML(proj).replace(/'/g, "\\'")}'])"
+                     title="Click para filtrar por ${escapeHTML(proj)}: ${c} tarea${c === 1 ? '' : 's'} activa${c === 1 ? '' : 's'}">
                     <span class="label">${escapeHTML(proj)}</span>
                     <span class="bar-track"><span class="bar-fill" style="width: ${pct}%;"></span></span>
                     <span class="count">${c}</span>
@@ -8508,6 +8864,10 @@
             container.innerHTML = '<div style="color: var(--text-soft); font-size: 0.85em; text-align: center; padding: 8px; font-style: italic;">Agrega miembros en Configuración</div>';
             return;
         }
+        // v28: helper para saber si está activo el filtro por este miembro
+        const activeResp = Array.isArray(state.filters.responsable) ? state.filters.responsable : [];
+        const isActive = (id) => activeResp.length === 1 && activeResp[0] === id;
+
         // Active tasks per member
         const counts = state.team.map(m => ({
             member: m,
@@ -8518,7 +8878,10 @@
         const rows = counts
             .sort((a, b) => b.count - a.count)
             .map(({ member, count }) => `
-                <div class="workload-row" style="--m-color:${member.color};">
+                <div class="workload-row clickable-row ${isActive(member.id) ? 'active-filter' : ''}"
+                     style="--m-color:${member.color};"
+                     onclick="filterFromWidget('responsable', ['${member.id}'])"
+                     title="Click para filtrar tareas de ${escapeHTML(member.nombre)}">
                     ${memberAvatarHTML(member, 'sm')}
                     <span class="name">${escapeHTML(member.nombre)}</span>
                     <span class="bar-track"><span class="bar-fill" style="width: ${(count / max) * 100}%;"></span></span>
@@ -8527,7 +8890,10 @@
             `);
         if (unassigned > 0) {
             rows.push(`
-                <div class="workload-row" style="--m-color: var(--text-soft);">
+                <div class="workload-row clickable-row ${isActive('__unassigned__') ? 'active-filter' : ''}"
+                     style="--m-color: var(--text-soft);"
+                     onclick="filterFromWidget('responsable', ['__unassigned__'])"
+                     title="Click para filtrar tareas sin asignar">
                     <span class="member-avatar size-sm" style="background: var(--bg-soft); color: var(--text-soft); box-shadow: 0 0 0 2px var(--bg-elev);">∅</span>
                     <span class="name" style="font-style: italic; color: var(--text-soft);">Sin asignar</span>
                     <span class="bar-track"><span class="bar-fill" style="width: ${(unassigned / max) * 100}%; background: var(--text-soft);"></span></span>
@@ -8956,6 +9322,29 @@
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && openFilterDropdown) {
             closeColFilter();
+            return;
+        }
+        // v28: Esc limpia filtros si hay alguno activo y no hay modal/dropdown abierto
+        if (e.key === 'Escape') {
+            // No actuar si hay modal abierto, input enfocado u otro contexto
+            const target = e.target;
+            const isInputFocused = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable);
+            if (isInputFocused) return;
+            const anyModalOpen = document.querySelector('.modal-overlay.show');
+            if (anyModalOpen) return;
+            // Si hay filtros activos, limpiarlos
+            const hasFilters = (
+                (state.filters.search && state.filters.search.trim()) ||
+                (Array.isArray(state.filters.proyecto) && state.filters.proyecto.length > 0) ||
+                (Array.isArray(state.filters.responsable) && state.filters.responsable.length > 0) ||
+                (Array.isArray(state.filters.prioridad) && state.filters.prioridad.length > 0) ||
+                (Array.isArray(state.filters.estado) && state.filters.estado.length > 0) ||
+                (Array.isArray(state.filters.revision) && state.filters.revision.length > 0)
+            );
+            if (hasFilters) {
+                clearFilters();
+                showToast('info', '🔄 Filtros limpiados', 'Esc: todos los filtros se quitaron.');
+            }
         }
     });
     // Reposicionar al hacer scroll/resize → simplemente cerrar
@@ -13009,7 +13398,9 @@
         // v25 — Card hoy + Planner semanal
         renderHabitsPlanner, renderHabitsTodayCard, renderHabitsTrend, toggleHabitOnDate,
         // v27 — Quick actions desde cards y detalle
-        quickDeleteHabit, quickArchiveHabit, deleteHabitFromDetail, archiveHabitFromDetail
+        quickDeleteHabit, quickArchiveHabit, deleteHabitFromDetail, archiveHabitFromDetail,
+        // v28 — Widgets clickeables
+        filterFromWidget, updateKpiActiveStates, showAvanceBreakdown
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
