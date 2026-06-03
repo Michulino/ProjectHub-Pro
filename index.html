@@ -4626,6 +4626,379 @@
             color: var(--danger);
         }
 
+        /* =================================================================
+           NUEVO v29: MÓDULO DE ISSUES
+           ================================================================= */
+        .issues-view {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .module-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7em;
+            font-weight: 700;
+            border-radius: 999px;
+            min-width: 20px;
+            height: 18px;
+            padding: 0 6px;
+            margin-left: 4px;
+        }
+        .issues-kpis {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 1200px) {
+            .issues-kpis { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .issues-kpis { grid-template-columns: repeat(2, 1fr); }
+        }
+        .kpi-card.issue-abiertos .kpi-icon { background: var(--danger-light); color: var(--danger); }
+        .kpi-card.issue-progreso .kpi-icon { background: var(--warning-light); color: var(--warning); }
+        .kpi-card.issue-resueltos .kpi-icon { background: var(--success-light); color: var(--success); }
+        .kpi-card.issue-tiempo .kpi-icon { background: var(--primary-light); color: var(--primary); }
+        .kpi-card.issue-vencidos .kpi-icon { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .kpi-card.issue-criticos .kpi-icon { background: rgba(220, 38, 38, 0.2); color: #b91c1c; }
+        [data-theme="dark"] .kpi-card.issue-criticos .kpi-icon { color: #fca5a5; }
+
+        .issues-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            box-shadow: var(--shadow-sm);
+        }
+        .issues-search-wrap {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .issues-search-wrap .search-icon {
+            position: absolute;
+            left: 10px;
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .issues-search-wrap input {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.9em;
+        }
+        .issues-search-wrap input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .issues-table-card {
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        .issues-table-wrap {
+            overflow-x: auto;
+        }
+        .issues-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9em;
+        }
+        .issues-table thead th {
+            background: var(--bg-muted);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .issues-table tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .issues-table tbody tr {
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        .issues-table tbody tr:hover {
+            background: var(--bg-muted);
+        }
+        .issue-id-badge {
+            display: inline-block;
+            font-family: ui-monospace, "SF Mono", Consolas, monospace;
+            background: var(--bg-muted);
+            color: var(--text);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+        .issue-title {
+            color: var(--text);
+            font-weight: 600;
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .issue-desc {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            margin-top: 2px;
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Severidad y Estado chips */
+        .severity-chip, .status-chip-issue {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.78em;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .severity-chip.Crítica { background: rgba(220, 38, 38, 0.15); color: #b91c1c; }
+        .severity-chip.Alta { background: rgba(245, 158, 11, 0.15); color: #b45309; }
+        .severity-chip.Media { background: rgba(59, 130, 246, 0.15); color: #1d4ed8; }
+        .severity-chip.Baja { background: rgba(107, 114, 128, 0.15); color: #4b5563; }
+        [data-theme="dark"] .severity-chip.Crítica { color: #fca5a5; }
+        [data-theme="dark"] .severity-chip.Alta { color: #fcd34d; }
+        [data-theme="dark"] .severity-chip.Media { color: #93c5fd; }
+        [data-theme="dark"] .severity-chip.Baja { color: #d1d5db; }
+
+        .status-chip-issue.Abierto { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+        .status-chip-issue.En.progreso { background: rgba(245, 158, 11, 0.15); color: #b45309; }
+        .status-chip-issue.Resuelto { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+        .status-chip-issue.Cerrado { background: rgba(107, 114, 128, 0.15); color: #4b5563; }
+        .status-chip-issue.Rechazado { background: rgba(107, 114, 128, 0.15); color: #4b5563; text-decoration: line-through; }
+        [data-theme="dark"] .status-chip-issue.Abierto { color: #fca5a5; }
+        [data-theme="dark"] .status-chip-issue.En.progreso { color: #fcd34d; }
+        [data-theme="dark"] .status-chip-issue.Resuelto { color: #86efac; }
+        [data-theme="dark"] .status-chip-issue.Cerrado, [data-theme="dark"] .status-chip-issue.Rechazado { color: #d1d5db; }
+
+        /* Contador de días con color */
+        .day-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.82em;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .day-counter.fresh { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+        .day-counter.warning { background: rgba(245, 158, 11, 0.15); color: #b45309; }
+        .day-counter.danger { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+        .day-counter.frozen { background: rgba(107, 114, 128, 0.12); color: #4b5563; }
+        [data-theme="dark"] .day-counter.fresh { color: #86efac; }
+        [data-theme="dark"] .day-counter.warning { color: #fcd34d; }
+        [data-theme="dark"] .day-counter.danger { color: #fca5a5; }
+        [data-theme="dark"] .day-counter.frozen { color: #d1d5db; }
+
+        /* Kanban Issues */
+        .issues-kanban {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(220px, 1fr));
+            gap: 12px;
+            overflow-x: auto;
+        }
+        @media (max-width: 1100px) {
+            .issues-kanban { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+        }
+        @media (max-width: 700px) {
+            .issues-kanban { grid-template-columns: 1fr; }
+        }
+        .kanban-col-issue {
+            background: var(--bg-muted);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            min-height: 200px;
+        }
+        .kanban-col-issue h4 {
+            margin: 0 0 10px 0;
+            font-size: 0.82em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kanban-col-issue h4 .count {
+            background: var(--bg-elev);
+            border-radius: 999px;
+            padding: 2px 9px;
+            font-size: 0.92em;
+            color: var(--text);
+        }
+        .kanban-card-issue {
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .kanban-card-issue:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        .kanban-card-issue .kc-id {
+            font-family: ui-monospace, "SF Mono", Consolas, monospace;
+            font-size: 0.7em;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .kanban-card-issue .kc-title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.88em;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .kanban-card-issue .kc-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78em;
+        }
+
+        /* Empty state */
+        .issues-empty {
+            text-align: center;
+            padding: 50px 20px;
+            background: var(--bg-elev);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+        }
+        .issues-empty .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+        .issues-empty h3 {
+            margin: 0 0 6px 0;
+            color: var(--text);
+        }
+        .issues-empty p {
+            color: var(--text-muted);
+            margin: 0 0 16px 0;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Trend */
+        .issues-trend {
+            height: 110px;
+            padding: 8px 4px;
+        }
+        .issues-trend-legend {
+            display: flex;
+            gap: 14px;
+            font-size: 0.78em;
+            color: var(--text-muted);
+            margin-top: 6px;
+            justify-content: center;
+        }
+        .issues-trend-legend .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        .issues-trend-legend .dot.reportado { background: var(--danger); }
+        .issues-trend-legend .dot.resuelto { background: var(--success); }
+
+        /* Comentarios */
+        .issue-comments {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .issue-comment {
+            background: var(--bg-muted);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+        }
+        .issue-comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .issue-comment-author { font-weight: 700; color: var(--text); }
+        .issue-comment-body {
+            font-size: 0.9em;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .issue-comment-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .issue-comment-delete:hover { color: var(--danger); }
+        .issue-comment-input {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.9em;
+            resize: vertical;
+            background: var(--bg-elev);
+            color: var(--text);
+        }
+
         /* Print */
         @media print {
             .toolbar, .app-header-actions, .task-actions, .sidebar { display: none !important; }
@@ -5718,6 +6091,11 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 5.5c0-2-1.5-3.5-3.5-3.5S6.5 3.5 6.5 5.5c0 .5.1 1 .3 1.4M6 11l6-9M4 22h16M4 22a2 2 0 0 1-2-2c0-3 4-6 10-6s10 3 10 6a2 2 0 0 1-2 2"/></svg>
                         Hábitos
                     </button>
+                    <button id="moduleIssuesBtn" onclick="setModule('issues')" role="tab">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Issues
+                        <span id="issuesOpenBadge" class="module-badge hidden">0</span>
+                    </button>
                 </div>
             </div>
             <div class="live-clock">
@@ -6149,6 +6527,170 @@
                 </button>
             </div>
         </section>
+
+        <!-- ============ MÓDULO DE ISSUES (v29) ============ -->
+        <section class="issues-view hidden" id="issuesView">
+
+            <!-- KPIs específicos de Issues -->
+            <div class="issues-kpis">
+                <div class="kpi-card issue-abiertos clickable-kpi" onclick="filterIssuesByKpi('estado', 'Abierto')" title="Click para filtrar Abiertos">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Abiertos</div>
+                        <div class="kpi-value" id="issuesAbiertos">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card issue-progreso clickable-kpi" onclick="filterIssuesByKpi('estado', 'En progreso')" title="Click para filtrar En Progreso">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">En progreso</div>
+                        <div class="kpi-value" id="issuesProgreso">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card issue-resueltos clickable-kpi" onclick="filterIssuesByKpi('estado', 'Resuelto')" title="Click para filtrar Resueltos">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Resueltos</div>
+                        <div class="kpi-value" id="issuesResueltos">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card issue-tiempo">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Tiempo prom.</div>
+                        <div class="kpi-value" id="issuesTiempoPromedio">0d</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card issue-vencidos clickable-kpi" onclick="filterIssuesShowOverdue()" title="Click para ver issues vencidos (>7 días sin resolver)">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Vencidos &gt;7d</div>
+                        <div class="kpi-value" id="issuesVencidos">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card issue-criticos clickable-kpi" onclick="filterIssuesByKpi('severidad', 'Crítica')" title="Click para filtrar Críticos">
+                    <div class="kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M3.86 21h16.28a2 2 0 0 0 1.79-2.89L13.79 3.62a2 2 0 0 0-3.58 0L2.07 18.11A2 2 0 0 0 3.86 21z"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Críticos</div>
+                        <div class="kpi-value" id="issuesCriticos">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar Issues -->
+            <div class="issues-toolbar">
+                <button class="btn btn-primary" onclick="openIssueModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Nuevo Issue
+                </button>
+                <div class="view-toggle">
+                    <button id="issueViewTable" class="active" onclick="setIssueView('table')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        Tabla
+                    </button>
+                    <button id="issueViewKanban" onclick="setIssueView('kanban')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="11" rx="1"/></svg>
+                        Kanban
+                    </button>
+                </div>
+                <div class="issues-search-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="issueSearch" placeholder="Buscar issue por título, ID, descripción..." oninput="renderIssues()">
+                </div>
+                <button class="btn btn-secondary" onclick="exportIssuesCSV()" title="Exportar a CSV">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    CSV
+                </button>
+                <button class="btn btn-ghost" id="issueClearFiltersBtn" onclick="clearIssueFilters()" title="Limpiar filtros">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    Limpiar
+                </button>
+            </div>
+
+            <!-- Chips de filtros activos -->
+            <div class="active-filters hidden" id="issueActiveFiltersBar">
+                <span class="filters-label">Filtros activos:</span>
+                <div id="issueActiveFiltersChips" class="filter-chips"></div>
+            </div>
+
+            <!-- Vista TABLA -->
+            <div class="issues-table-card" id="issuesTableView">
+                <div class="issues-table-wrap">
+                    <table class="issues-table" id="issuesTable">
+                        <!-- Se llena dinámicamente -->
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista KANBAN -->
+            <div class="issues-kanban hidden" id="issuesKanbanView">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- Empty state -->
+            <div class="issues-empty hidden" id="issuesEmpty">
+                <div class="icon">🐛</div>
+                <h3>No hay issues registrados</h3>
+                <p>Empieza a registrar los issues que tu equipo reporte. Llevarás trazabilidad completa: quién lo reportó, quién lo resuelve, y cuántos días lleva abierto.</p>
+                <button class="btn btn-primary" onclick="openIssueModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Crear primer issue
+                </button>
+            </div>
+
+            <!-- Insights Issues -->
+            <section class="insights-row" id="issuesInsightsRow">
+                <!-- Severidad -->
+                <div class="chart-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                        Issues por severidad
+                    </h3>
+                    <div class="bar-chart" id="issuesSeverityChart"></div>
+                </div>
+
+                <!-- Carga por responsable -->
+                <div class="workload-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg>
+                        Issues por responsable
+                    </h3>
+                    <div class="workload-list" id="issuesAssigneeChart"></div>
+                </div>
+
+                <!-- Trend -->
+                <div class="heatmap-card">
+                    <h3>
+                        <span class="title-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            Tendencia 30 días
+                        </span>
+                    </h3>
+                    <div class="issues-trend" id="issuesTrend"></div>
+                    <div class="issues-trend-legend">
+                        <span><span class="dot reportado"></span> Reportados</span>
+                        <span><span class="dot resuelto"></span> Resueltos</span>
+                    </div>
+                </div>
+            </section>
+        </section>
     </div>
 
     <!-- ============ MODAL: CREAR / EDITAR HÁBITO ============ -->
@@ -6257,6 +6799,124 @@
                 </button>
                 <button class="btn btn-secondary" onclick="closeHabitDetailModal()">Cerrar</button>
                 <button class="btn btn-primary" id="habitDetailEditBtn" onclick="editHabitFromDetail()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Editar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL CREAR / EDITAR ISSUE (v29) ============ -->
+    <div id="issueModal" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2 id="issueModalTitle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Nuevo issue
+                </h2>
+                <button class="modal-close" onclick="closeIssueModal()" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="issueForm" onsubmit="saveIssue(event)">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueTitle">Título <span style="color: var(--danger);">*</span></label>
+                            <input type="text" id="issueTitle" required maxlength="200" placeholder="Resumen breve del problema">
+                        </div>
+                        <div class="form-group" style="width: 130px;">
+                            <label>ID</label>
+                            <input type="text" id="issueIdDisplay" readonly style="font-family: ui-monospace, monospace; background: var(--bg-muted);" placeholder="BUG-NEW">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issueDescription">Descripción</label>
+                        <textarea id="issueDescription" rows="4" placeholder="Detalles del problema, contexto, comportamiento esperado vs real..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueReportedBy">Reportado por <span style="color: var(--danger);">*</span></label>
+                            <select id="issueReportedBy" required></select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueAssignedTo">Asignado a</label>
+                            <select id="issueAssignedTo">
+                                <option value="">— Sin asignar —</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueEstado">Estado</label>
+                            <select id="issueEstado">
+                                <option value="Abierto">Abierto</option>
+                                <option value="En progreso">En progreso</option>
+                                <option value="Resuelto">Resuelto</option>
+                                <option value="Cerrado">Cerrado</option>
+                                <option value="Rechazado">Rechazado</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueSeveridad">Severidad</label>
+                            <select id="issueSeveridad">
+                                <option value="Crítica">🔴 Crítica</option>
+                                <option value="Alta">🟠 Alta</option>
+                                <option value="Media" selected>🔵 Media</option>
+                                <option value="Baja">⚪ Baja</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueProyecto">Proyecto/Módulo</label>
+                            <select id="issueProyecto"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="issueDatesRow">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueFechaReporte">Fecha de reporte</label>
+                            <input type="date" id="issueFechaReporte">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="issueFechaSolucion">Fecha de solución</label>
+                            <input type="date" id="issueFechaSolucion">
+                            <small style="font-size: 0.78em; color: var(--text-muted);">Se llena automáticamente al cerrar/resolver</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="issueDeleteBtn" onclick="confirmDeleteIssueFromModal()" style="margin-right: auto; display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Eliminar
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeIssueModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ MODAL DETALLE ISSUE (v29) ============ -->
+    <div id="issueDetailModal" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2 id="issueDetailTitle">Detalle del issue</h2>
+                <button class="modal-close" onclick="closeIssueDetailModal()" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="issueDetailBody">
+                <!-- Se llena dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeIssueDetailModal()">Cerrar</button>
+                <button class="btn btn-primary" onclick="editIssueFromDetail()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     Editar
                 </button>
@@ -6827,7 +7487,8 @@
         myDayMember: 'projecthub_myday_member',
         habits: 'projecthub_habits',
         habitLogs: 'projecthub_habit_logs',
-        currentModule: 'projecthub_current_module'
+        currentModule: 'projecthub_current_module',
+        issues: 'projecthub_issues'
     };
 
     // Versión actual del esquema de datos
@@ -6885,7 +7546,19 @@
         habits: [], // [{id, name, emoji, color, category, type, target, unit, cue, why, createdAt, archived}]
         habitLogs: {}, // { habitId: { '2026-05-20': true|number, '2026-05-19': true|2 } }
         currentModule: 'tasks', // 'tasks' | 'habits'
-        editingHabitId: null
+        editingHabitId: null,
+        // v29: Issues
+        issues: [],
+        editingIssueId: null,
+        issueView: 'table', // 'table' | 'kanban'
+        issueFilters: {
+            search: '',
+            estado: [],
+            severidad: [],
+            asignado: [],
+            reportado: [],
+            proyecto: []
+        }
     };
 
     const defaultTeam = [
@@ -7037,7 +7710,13 @@
                 catch { state.habitLogs = {}; }
             }
             const mod = localStorage.getItem(STORAGE.currentModule);
-            if (mod === 'habits') state.currentModule = 'habits';
+            if (mod === 'habits' || mod === 'issues') state.currentModule = mod;
+            // v29: cargar issues
+            const issuesRaw = localStorage.getItem(STORAGE.issues);
+            if (issuesRaw) {
+                try { state.issues = JSON.parse(issuesRaw); }
+                catch { state.issues = []; }
+            }
         } catch (e) {
             console.error('Error cargando datos:', e);
             showToast('error', 'Error', 'No se pudieron cargar los datos guardados.');
@@ -7061,6 +7740,8 @@
             localStorage.setItem(STORAGE.habits, JSON.stringify(state.habits));
             localStorage.setItem(STORAGE.habitLogs, JSON.stringify(state.habitLogs));
             localStorage.setItem(STORAGE.currentModule, state.currentModule);
+            // v29: issues
+            localStorage.setItem(STORAGE.issues, JSON.stringify(state.issues));
         } catch (e) {
             showToast('error', 'Error', 'No se pudo guardar (¿quizá la foto es muy grande?).');
         }
@@ -12391,10 +13072,13 @@
         saveToStorage();
         $('#moduleTasksBtn').classList.toggle('active', module === 'tasks');
         $('#moduleHabitsBtn').classList.toggle('active', module === 'habits');
+        const issuesBtn = $('#moduleIssuesBtn');
+        if (issuesBtn) issuesBtn.classList.toggle('active', module === 'issues');
         $('#tasksView').classList.toggle('hidden', module !== 'tasks');
         $('#habitsView').classList.toggle('hidden', module !== 'habits');
+        const issuesView = $('#issuesView');
+        if (issuesView) issuesView.classList.toggle('hidden', module !== 'issues');
         if (module === 'habits') {
-            // Si es primera vez (sin hábitos creados), precargar los del cuaderno
             const wasSeeded = seedHabitsIfNeeded();
             if (wasSeeded) {
                 showToast('success', '🌱 Hábitos precargados', `Se crearon ${SEED_HABITS.length} hábitos del cuaderno.`);
@@ -12403,6 +13087,11 @@
             renderHabitsDashboard();
             renderHabitsPlanner();
             renderHabitsTrend();
+        }
+        if (module === 'issues') {
+            renderIssues();
+            renderIssuesKpis();
+            renderIssuesInsights();
         }
     }
 
@@ -13360,6 +14049,724 @@
         setModule(state.currentModule || 'tasks');
     }
 
+    /* =====================================================================
+       v29: MÓDULO DE ISSUES — FUNCIONES
+       ===================================================================== */
+
+    function generateIssueId() {
+        const nums = state.issues
+            .map(i => parseInt(String(i.id).replace(/\D/g, ''), 10))
+            .filter(n => !isNaN(n));
+        const next = (Math.max(0, ...nums) + 1).toString().padStart(3, '0');
+        return `BUG-${next}`;
+    }
+
+    /* Calcula días vivos del issue. Si está cerrado/resuelto, congela.
+       Devuelve { days, frozen } */
+    function daysSinceReport(issue) {
+        if (!issue.fechaReporte) return { days: 0, frozen: false };
+        const start = new Date(issue.fechaReporte);
+        const isClosed = issue.estado === 'Resuelto' || issue.estado === 'Cerrado' || issue.estado === 'Rechazado';
+        const end = (isClosed && issue.fechaSolucion) ? new Date(issue.fechaSolucion) : new Date();
+        const ms = end.getTime() - start.getTime();
+        return { days: Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24))), frozen: isClosed };
+    }
+
+    /* Devuelve clase CSS según estado: fresh (<3d) / warning (3-7d) / danger (>7d) / frozen */
+    function dayCounterClass(issue) {
+        const { days, frozen } = daysSinceReport(issue);
+        if (frozen) return 'frozen';
+        if (days < 3) return 'fresh';
+        if (days <= 7) return 'warning';
+        return 'danger';
+    }
+
+    function getIssueAssigneeName(issue) {
+        if (!issue.asignadoA) return 'Sin asignar';
+        const m = state.team.find(x => x.id === issue.asignadoA);
+        return m ? m.nombre : issue.asignadoA;
+    }
+    function getIssueReporterName(issue) {
+        const m = state.team.find(x => x.id === issue.reportadoPor);
+        return m ? m.nombre : (issue.reportadoPor || '—');
+    }
+
+    /* === Modal Crear/Editar Issue === */
+    function openIssueModal(issue = null) {
+        state.editingIssueId = issue ? issue.id : null;
+        $('#issueModalTitle').textContent = issue ? `Editar ${issue.id}` : 'Nuevo issue';
+        $('#issueDeleteBtn').style.display = issue ? '' : 'none';
+
+        // Llenar selects
+        const reportedSel = $('#issueReportedBy');
+        const assignedSel = $('#issueAssignedTo');
+        const projectSel = $('#issueProyecto');
+        reportedSel.innerHTML = '<option value="">— Selecciona —</option>' +
+            state.team.map(m => `<option value="${escapeHTML(m.id)}">${escapeHTML(m.nombre)}</option>`).join('');
+        assignedSel.innerHTML = '<option value="">— Sin asignar —</option>' +
+            state.team.map(m => `<option value="${escapeHTML(m.id)}">${escapeHTML(m.nombre)}</option>`).join('');
+        projectSel.innerHTML = '<option value="">— Sin proyecto —</option>' +
+            state.projects.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
+
+        if (issue) {
+            $('#issueIdDisplay').value = issue.id;
+            $('#issueTitle').value = issue.titulo || '';
+            $('#issueDescription').value = issue.descripcion || '';
+            $('#issueReportedBy').value = issue.reportadoPor || '';
+            $('#issueAssignedTo').value = issue.asignadoA || '';
+            $('#issueEstado').value = issue.estado || 'Abierto';
+            $('#issueSeveridad').value = issue.severidad || 'Media';
+            $('#issueProyecto').value = issue.proyecto || '';
+            $('#issueFechaReporte').value = issue.fechaReporte ? issue.fechaReporte.slice(0, 10) : '';
+            $('#issueFechaSolucion').value = issue.fechaSolucion ? issue.fechaSolucion.slice(0, 10) : '';
+        } else {
+            $('#issueIdDisplay').value = generateIssueId();
+            $('#issueTitle').value = '';
+            $('#issueDescription').value = '';
+            $('#issueReportedBy').value = '';
+            $('#issueAssignedTo').value = '';
+            $('#issueEstado').value = 'Abierto';
+            $('#issueSeveridad').value = 'Media';
+            $('#issueProyecto').value = state.projects[0] || '';
+            $('#issueFechaReporte').value = new Date().toISOString().slice(0, 10);
+            $('#issueFechaSolucion').value = '';
+        }
+        $('#issueModal').classList.add('show');
+        setTimeout(() => $('#issueTitle').focus(), 100);
+    }
+
+    function closeIssueModal() {
+        $('#issueModal').classList.remove('show');
+        state.editingIssueId = null;
+    }
+
+    function saveIssue(event) {
+        if (event) event.preventDefault();
+        const titulo = $('#issueTitle').value.trim();
+        const reportadoPor = $('#issueReportedBy').value;
+        if (!titulo) {
+            showToast('warning', 'Falta título', 'El issue necesita un título.');
+            return;
+        }
+        if (!reportadoPor) {
+            showToast('warning', 'Falta reportador', '¿Quién reportó este issue?');
+            return;
+        }
+        const estado = $('#issueEstado').value;
+        const fechaSolucionInput = $('#issueFechaSolucion').value;
+        const isClosed = estado === 'Resuelto' || estado === 'Cerrado' || estado === 'Rechazado';
+        // Si está cerrado y no hay fechaSolucion, ponerla hoy
+        const fechaSolucion = fechaSolucionInput
+            ? new Date(fechaSolucionInput).toISOString()
+            : (isClosed ? new Date().toISOString() : null);
+
+        const payload = {
+            titulo,
+            descripcion: $('#issueDescription').value.trim(),
+            reportadoPor,
+            asignadoA: $('#issueAssignedTo').value || null,
+            estado,
+            severidad: $('#issueSeveridad').value,
+            proyecto: $('#issueProyecto').value || null,
+            fechaReporte: $('#issueFechaReporte').value ? new Date($('#issueFechaReporte').value).toISOString() : new Date().toISOString(),
+            fechaSolucion,
+            updatedAt: new Date().toISOString()
+        };
+
+        if (state.editingIssueId) {
+            const idx = state.issues.findIndex(i => i.id === state.editingIssueId);
+            if (idx >= 0) {
+                const existing = state.issues[idx];
+                state.issues[idx] = { ...existing, ...payload, comentarios: existing.comentarios || [] };
+                showToast('success', '✓ Issue actualizado', state.editingIssueId);
+            }
+        } else {
+            const newIssue = {
+                id: $('#issueIdDisplay').value || generateIssueId(),
+                ...payload,
+                comentarios: [],
+                createdAt: new Date().toISOString()
+            };
+            state.issues.push(newIssue);
+            showToast('success', '✓ Issue creado', newIssue.id);
+        }
+        saveToStorage();
+        closeIssueModal();
+        renderIssues();
+        renderIssuesKpis();
+        renderIssuesInsights();
+    }
+
+    function confirmDeleteIssue(id) {
+        const issue = state.issues.find(i => i.id === id);
+        if (!issue) return;
+        openConfirmModal(
+            'Eliminar issue',
+            `¿Eliminar <strong>${issue.id}</strong> "${escapeHTML(issue.titulo)}"? Se perderán también sus comentarios. Esta acción no se puede deshacer.`,
+            () => {
+                state.issues = state.issues.filter(i => i.id !== id);
+                saveToStorage();
+                renderIssues();
+                renderIssuesKpis();
+                renderIssuesInsights();
+                showToast('success', '🗑 Issue eliminado', id);
+            }
+        );
+    }
+
+    function confirmDeleteIssueFromModal() {
+        if (!state.editingIssueId) return;
+        const id = state.editingIssueId;
+        closeIssueModal();
+        confirmDeleteIssue(id);
+    }
+
+    /* === Modal Detalle === */
+    let currentDetailIssueId = null;
+    function openIssueDetail(id) {
+        const issue = state.issues.find(i => i.id === id);
+        if (!issue) return;
+        currentDetailIssueId = id;
+        const { days, frozen } = daysSinceReport(issue);
+        const counterCls = dayCounterClass(issue);
+        const dayLabel = frozen
+            ? `Cerrado en ${days} día${days === 1 ? '' : 's'}`
+            : `${days} día${days === 1 ? '' : 's'} abierto`;
+
+        const reporter = getIssueReporterName(issue);
+        const assignee = getIssueAssigneeName(issue);
+        const proyecto = issue.proyecto || '— Sin proyecto —';
+        const fechaRep = issue.fechaReporte ? new Date(issue.fechaReporte).toLocaleDateString('es-ES') : '—';
+        const fechaSol = issue.fechaSolucion ? new Date(issue.fechaSolucion).toLocaleDateString('es-ES') : '—';
+
+        $('#issueDetailTitle').innerHTML = `
+            <span class="issue-id-badge">${escapeHTML(issue.id)}</span>
+            ${escapeHTML(issue.titulo)}
+        `;
+
+        const comments = issue.comentarios || [];
+        const commentsHTML = comments.length === 0
+            ? '<div style="text-align:center; color: var(--text-muted); font-style: italic; padding: 16px; font-size: 0.88em;">Sin comentarios todavía. Agrega el primero.</div>'
+            : comments.map(c => `
+                <div class="issue-comment">
+                    <div class="issue-comment-header">
+                        <span class="issue-comment-author">${escapeHTML(c.autor || '—')}</span>
+                        <span>${new Date(c.fecha).toLocaleString('es-ES')}
+                            <button class="issue-comment-delete" onclick="deleteIssueComment('${issue.id}','${c.id}')" title="Eliminar comentario">✕</button>
+                        </span>
+                    </div>
+                    <div class="issue-comment-body">${escapeHTML(c.texto)}</div>
+                </div>
+            `).join('');
+
+        $('#issueDetailBody').innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Estado</div>
+                    <span class="status-chip-issue ${issue.estado.replace(/\s+/g, '.')}">${escapeHTML(issue.estado)}</span>
+                </div>
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Severidad</div>
+                    <span class="severity-chip ${escapeHTML(issue.severidad)}">${escapeHTML(issue.severidad)}</span>
+                </div>
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Tiempo</div>
+                    <span class="day-counter ${counterCls}">${dayLabel}</span>
+                </div>
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Proyecto</div>
+                    <div style="font-weight: 600;">${escapeHTML(proyecto)}</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; padding: 12px; background: var(--bg-muted); border-radius: var(--radius);">
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); margin-bottom: 2px;">Reportado por</div>
+                    <div style="font-weight: 600;">${escapeHTML(reporter)}</div>
+                    <div style="font-size: 0.82em; color: var(--text-muted); margin-top: 2px;">${fechaRep}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78em; color: var(--text-muted); margin-bottom: 2px;">Asignado a</div>
+                    <div style="font-weight: 600;">${escapeHTML(assignee)}</div>
+                    <div style="font-size: 0.82em; color: var(--text-muted); margin-top: 2px;">Solución: ${fechaSol}</div>
+                </div>
+            </div>
+
+            ${issue.descripcion ? `
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Descripción</div>
+                    <div style="white-space: pre-wrap; font-size: 0.9em; line-height: 1.5;">${escapeHTML(issue.descripcion)}</div>
+                </div>
+            ` : ''}
+
+            <div>
+                <div style="font-size: 0.78em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Comentarios / Updates</div>
+                <div class="issue-comments">${commentsHTML}</div>
+                <textarea class="issue-comment-input" id="newIssueComment" placeholder="Agrega un comentario o update..."></textarea>
+                <button class="btn btn-primary" style="margin-top: 6px;" onclick="addIssueComment('${issue.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Agregar comentario
+                </button>
+            </div>
+        `;
+        $('#issueDetailModal').classList.add('show');
+    }
+
+    function closeIssueDetailModal() {
+        $('#issueDetailModal').classList.remove('show');
+        currentDetailIssueId = null;
+    }
+
+    function editIssueFromDetail() {
+        if (!currentDetailIssueId) return;
+        const issue = state.issues.find(i => i.id === currentDetailIssueId);
+        closeIssueDetailModal();
+        if (issue) openIssueModal(issue);
+    }
+
+    function addIssueComment(id) {
+        const textArea = $('#newIssueComment');
+        if (!textArea) return;
+        const texto = textArea.value.trim();
+        if (!texto) {
+            showToast('warning', 'Vacío', 'Escribe algo en el comentario.');
+            return;
+        }
+        const issue = state.issues.find(i => i.id === id);
+        if (!issue) return;
+        if (!issue.comentarios) issue.comentarios = [];
+        issue.comentarios.push({
+            id: 'C' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            autor: (state.user && state.user.name) || 'Yo',
+            texto,
+            fecha: new Date().toISOString()
+        });
+        issue.updatedAt = new Date().toISOString();
+        saveToStorage();
+        openIssueDetail(id); // refresh
+        showToast('success', '💬 Comentario agregado', '');
+    }
+
+    function deleteIssueComment(issueId, commentId) {
+        const issue = state.issues.find(i => i.id === issueId);
+        if (!issue || !issue.comentarios) return;
+        issue.comentarios = issue.comentarios.filter(c => c.id !== commentId);
+        saveToStorage();
+        openIssueDetail(issueId);
+    }
+
+    /* === Vistas: Tabla / Kanban === */
+    function setIssueView(view) {
+        state.issueView = view;
+        $('#issueViewTable').classList.toggle('active', view === 'table');
+        $('#issueViewKanban').classList.toggle('active', view === 'kanban');
+        $('#issuesTableView').classList.toggle('hidden', view !== 'table');
+        $('#issuesKanbanView').classList.toggle('hidden', view !== 'kanban');
+        renderIssues();
+    }
+
+    /* === Filtrar los issues según state.issueFilters === */
+    function getFilteredIssues() {
+        const f = state.issueFilters;
+        const search = ($('#issueSearch')?.value || '').toLowerCase().trim();
+        return state.issues.filter(i => {
+            if (search) {
+                const haystack = `${i.id} ${i.titulo} ${i.descripcion || ''}`.toLowerCase();
+                if (!haystack.includes(search)) return false;
+            }
+            if (f.estado.length > 0 && !f.estado.includes(i.estado)) return false;
+            if (f.severidad.length > 0 && !f.severidad.includes(i.severidad)) return false;
+            if (f.asignado.length > 0) {
+                const target = i.asignadoA || '__unassigned__';
+                if (!f.asignado.includes(target)) return false;
+            }
+            if (f.reportado.length > 0 && !f.reportado.includes(i.reportadoPor)) return false;
+            if (f.proyecto.length > 0 && !f.proyecto.includes(i.proyecto || '')) return false;
+            // Filtro especial overdue
+            if (f._overdue) {
+                const { days, frozen } = daysSinceReport(i);
+                if (frozen || days <= 7) return false;
+            }
+            return true;
+        });
+    }
+
+    /* === Render Issues === */
+    function renderIssues() {
+        const filtered = getFilteredIssues();
+        const tableEl = $('#issuesTableView');
+        const kanbanEl = $('#issuesKanbanView');
+        const emptyEl = $('#issuesEmpty');
+
+        if (state.issues.length === 0) {
+            tableEl.classList.add('hidden');
+            kanbanEl.classList.add('hidden');
+            emptyEl.classList.remove('hidden');
+            updateIssueFilterChips();
+            return;
+        }
+        emptyEl.classList.add('hidden');
+
+        if (state.issueView === 'kanban') {
+            tableEl.classList.add('hidden');
+            kanbanEl.classList.remove('hidden');
+            renderIssuesKanban(filtered);
+        } else {
+            tableEl.classList.remove('hidden');
+            kanbanEl.classList.add('hidden');
+            renderIssuesTable(filtered);
+        }
+        updateIssueFilterChips();
+    }
+
+    function renderIssuesTable(issues) {
+        const table = $('#issuesTable');
+        if (!table) return;
+        if (issues.length === 0) {
+            table.innerHTML = `<tbody><tr><td style="padding: 40px; text-align: center; color: var(--text-muted);">
+                Sin issues con estos filtros. <a href="#" onclick="event.preventDefault(); clearIssueFilters()" style="color: var(--primary); font-weight: 600;">Limpiar filtros</a>
+            </td></tr></tbody>`;
+            return;
+        }
+        const sorted = [...issues].sort((a, b) => {
+            // Críticos primero, luego por fecha desc
+            const sevOrder = { 'Crítica': 0, 'Alta': 1, 'Media': 2, 'Baja': 3 };
+            const sa = sevOrder[a.severidad] ?? 99;
+            const sb = sevOrder[b.severidad] ?? 99;
+            if (sa !== sb) return sa - sb;
+            return new Date(b.fechaReporte) - new Date(a.fechaReporte);
+        });
+        let html = `<thead><tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Severidad</th>
+            <th>Estado</th>
+            <th>Reportado por</th>
+            <th>Asignado a</th>
+            <th>Reporte</th>
+            <th>Días</th>
+        </tr></thead><tbody>`;
+        sorted.forEach(i => {
+            const { days, frozen } = daysSinceReport(i);
+            const cls = dayCounterClass(i);
+            const fechaRep = i.fechaReporte ? new Date(i.fechaReporte).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : '—';
+            html += `<tr onclick="openIssueDetail('${escapeHTML(i.id)}')">
+                <td><span class="issue-id-badge">${escapeHTML(i.id)}</span></td>
+                <td>
+                    <div class="issue-title">${escapeHTML(i.titulo)}</div>
+                    ${i.descripcion ? `<div class="issue-desc">${escapeHTML(i.descripcion.substring(0, 80))}${i.descripcion.length > 80 ? '…' : ''}</div>` : ''}
+                </td>
+                <td><span class="severity-chip ${escapeHTML(i.severidad)}">${escapeHTML(i.severidad)}</span></td>
+                <td><span class="status-chip-issue ${i.estado.replace(/\s+/g, '.')}">${escapeHTML(i.estado)}</span></td>
+                <td>${escapeHTML(getIssueReporterName(i))}</td>
+                <td>${escapeHTML(getIssueAssigneeName(i))}</td>
+                <td style="white-space: nowrap; color: var(--text-muted); font-size: 0.85em;">${fechaRep}</td>
+                <td><span class="day-counter ${cls}" title="${frozen ? 'Cerrado' : 'Días abierto'}">${frozen ? '🔒' : ''} ${days}d</span></td>
+            </tr>`;
+        });
+        html += '</tbody>';
+        table.innerHTML = html;
+    }
+
+    function renderIssuesKanban(issues) {
+        const container = $('#issuesKanbanView');
+        if (!container) return;
+        const cols = ['Abierto', 'En progreso', 'Resuelto', 'Cerrado', 'Rechazado'];
+        let html = '';
+        cols.forEach(estado => {
+            const list = issues.filter(i => i.estado === estado);
+            html += `<div class="kanban-col-issue">
+                <h4>${escapeHTML(estado)} <span class="count">${list.length}</span></h4>
+                ${list.map(i => {
+                    const { days, frozen } = daysSinceReport(i);
+                    const cls = dayCounterClass(i);
+                    return `<div class="kanban-card-issue" onclick="openIssueDetail('${escapeHTML(i.id)}')">
+                        <div class="kc-id">${escapeHTML(i.id)}</div>
+                        <div class="kc-title">${escapeHTML(i.titulo)}</div>
+                        <div class="kc-meta">
+                            <span class="severity-chip ${escapeHTML(i.severidad)}">${escapeHTML(i.severidad)}</span>
+                            <span class="day-counter ${cls}">${days}d</span>
+                        </div>
+                    </div>`;
+                }).join('')}
+                ${list.length === 0 ? '<div style="text-align:center; color: var(--text-muted); font-size: 0.78em; padding: 12px;">—</div>' : ''}
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    /* === KPIs === */
+    function renderIssuesKpis() {
+        const all = state.issues;
+        const abiertos = all.filter(i => i.estado === 'Abierto').length;
+        const enProg = all.filter(i => i.estado === 'En progreso').length;
+        const resueltos = all.filter(i => i.estado === 'Resuelto' || i.estado === 'Cerrado').length;
+        const criticos = all.filter(i => i.severidad === 'Crítica' && (i.estado === 'Abierto' || i.estado === 'En progreso')).length;
+        const vencidos = all.filter(i => {
+            const { days, frozen } = daysSinceReport(i);
+            return !frozen && days > 7;
+        }).length;
+
+        // Tiempo promedio (solo cerrados/resueltos)
+        const closed = all.filter(i => (i.estado === 'Resuelto' || i.estado === 'Cerrado') && i.fechaSolucion && i.fechaReporte);
+        let avg = 0;
+        if (closed.length > 0) {
+            const sum = closed.reduce((acc, i) => {
+                const d = (new Date(i.fechaSolucion).getTime() - new Date(i.fechaReporte).getTime()) / (1000 * 60 * 60 * 24);
+                return acc + Math.max(0, d);
+            }, 0);
+            avg = Math.round(sum / closed.length);
+        }
+
+        $('#issuesAbiertos').textContent = abiertos;
+        $('#issuesProgreso').textContent = enProg;
+        $('#issuesResueltos').textContent = resueltos;
+        $('#issuesTiempoPromedio').textContent = avg + 'd';
+        $('#issuesVencidos').textContent = vencidos;
+        $('#issuesCriticos').textContent = criticos;
+
+        // Badge en el botón del módulo
+        const badge = $('#issuesOpenBadge');
+        const openCount = abiertos + enProg;
+        if (badge) {
+            if (openCount > 0) {
+                badge.textContent = openCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    }
+
+    /* === Insights === */
+    function renderIssuesInsights() {
+        // Severidad chart
+        const sevContainer = $('#issuesSeverityChart');
+        if (sevContainer) {
+            const sevCounts = { 'Crítica': 0, 'Alta': 0, 'Media': 0, 'Baja': 0 };
+            state.issues.forEach(i => {
+                if (i.estado !== 'Cerrado' && i.estado !== 'Resuelto' && i.estado !== 'Rechazado') {
+                    sevCounts[i.severidad] = (sevCounts[i.severidad] || 0) + 1;
+                }
+            });
+            const entries = Object.entries(sevCounts).filter(([_, c]) => c > 0);
+            if (entries.length === 0) {
+                sevContainer.innerHTML = '<div style="text-align:center; color: var(--text-soft); padding: 8px;">Sin issues abiertos</div>';
+            } else {
+                const max = Math.max(...entries.map(e => e[1]));
+                sevContainer.innerHTML = entries.map(([sev, c]) => {
+                    const pct = (c / max) * 100;
+                    return `<div class="bar-row" title="${sev}: ${c}">
+                        <span class="label">${sev}</span>
+                        <span class="bar-track"><span class="bar-fill" style="width: ${pct}%;"></span></span>
+                        <span class="count">${c}</span>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // Assignee chart
+        const asContainer = $('#issuesAssigneeChart');
+        if (asContainer) {
+            const counts = state.team.map(m => ({
+                member: m,
+                count: state.issues.filter(i => i.asignadoA === m.id && (i.estado === 'Abierto' || i.estado === 'En progreso')).length
+            })).filter(c => c.count > 0);
+            const unassigned = state.issues.filter(i => !i.asignadoA && (i.estado === 'Abierto' || i.estado === 'En progreso')).length;
+            if (counts.length === 0 && unassigned === 0) {
+                asContainer.innerHTML = '<div style="text-align:center; color: var(--text-soft); padding: 8px; font-size: 0.85em;">Sin issues activos</div>';
+            } else {
+                const max = Math.max(1, ...counts.map(c => c.count), unassigned);
+                let html = counts.sort((a, b) => b.count - a.count).map(({ member, count }) => `
+                    <div class="workload-row" style="--m-color:${member.color};">
+                        ${memberAvatarHTML(member, 'sm')}
+                        <span class="name">${escapeHTML(member.nombre)}</span>
+                        <span class="bar-track"><span class="bar-fill" style="width:${(count / max) * 100}%;"></span></span>
+                        <span class="count">${count}</span>
+                    </div>
+                `).join('');
+                if (unassigned > 0) {
+                    html += `<div class="workload-row" style="--m-color: var(--text-soft);">
+                        <span class="member-avatar size-sm" style="background: var(--bg-soft); color: var(--text-soft);">∅</span>
+                        <span class="name" style="font-style: italic;">Sin asignar</span>
+                        <span class="bar-track"><span class="bar-fill" style="width:${(unassigned / max) * 100}%; background: var(--text-soft);"></span></span>
+                        <span class="count">${unassigned}</span>
+                    </div>`;
+                }
+                asContainer.innerHTML = html;
+            }
+        }
+
+        // Trend 30d
+        const trendContainer = $('#issuesTrend');
+        if (trendContainer) {
+            const days = 30;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const reportedPerDay = new Array(days).fill(0);
+            const resolvedPerDay = new Array(days).fill(0);
+            state.issues.forEach(i => {
+                if (i.fechaReporte) {
+                    const d = new Date(i.fechaReporte);
+                    d.setHours(0, 0, 0, 0);
+                    const diff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+                    if (diff >= 0 && diff < days) reportedPerDay[days - 1 - diff]++;
+                }
+                if (i.fechaSolucion) {
+                    const d = new Date(i.fechaSolucion);
+                    d.setHours(0, 0, 0, 0);
+                    const diff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+                    if (diff >= 0 && diff < days) resolvedPerDay[days - 1 - diff]++;
+                }
+            });
+            const max = Math.max(1, ...reportedPerDay, ...resolvedPerDay);
+            const w = 100 / days;
+            let bars = '';
+            for (let i = 0; i < days; i++) {
+                const hR = (reportedPerDay[i] / max) * 100;
+                const hS = (resolvedPerDay[i] / max) * 100;
+                bars += `
+                    <div style="position:absolute; left:${i * w}%; width:${w * 0.4}%; bottom:0; height:${hR}%; background:var(--danger); border-radius:2px 2px 0 0; opacity:0.85;" title="Reportados: ${reportedPerDay[i]}"></div>
+                    <div style="position:absolute; left:${i * w + w * 0.5}%; width:${w * 0.4}%; bottom:0; height:${hS}%; background:var(--success); border-radius:2px 2px 0 0; opacity:0.85;" title="Resueltos: ${resolvedPerDay[i]}"></div>
+                `;
+            }
+            trendContainer.innerHTML = `<div style="position:relative; width:100%; height:100%;">${bars}</div>`;
+        }
+    }
+
+    /* === Filtros desde KPIs === */
+    function filterIssuesByKpi(field, value) {
+        // toggle si ya está
+        const current = state.issueFilters[field] || [];
+        const isSame = current.length === 1 && current[0] === value;
+        // limpiar todos
+        state.issueFilters.estado = [];
+        state.issueFilters.severidad = [];
+        state.issueFilters.asignado = [];
+        state.issueFilters.reportado = [];
+        state.issueFilters.proyecto = [];
+        delete state.issueFilters._overdue;
+        if (!isSame) {
+            state.issueFilters[field] = [value];
+            showToast('info', '🔍 Filtro aplicado', `${field}: ${value}`);
+        } else {
+            showToast('info', '🔄 Filtros limpiados', '');
+        }
+        renderIssues();
+    }
+
+    function filterIssuesShowOverdue() {
+        state.issueFilters.estado = [];
+        state.issueFilters.severidad = [];
+        state.issueFilters.asignado = [];
+        state.issueFilters.reportado = [];
+        state.issueFilters.proyecto = [];
+        if (state.issueFilters._overdue) {
+            delete state.issueFilters._overdue;
+            showToast('info', '🔄 Filtros limpiados', '');
+        } else {
+            state.issueFilters._overdue = true;
+            showToast('warning', '⚠️ Mostrando vencidos', 'Issues con más de 7 días abiertos.');
+        }
+        renderIssues();
+    }
+
+    function clearIssueFilters() {
+        state.issueFilters.search = '';
+        state.issueFilters.estado = [];
+        state.issueFilters.severidad = [];
+        state.issueFilters.asignado = [];
+        state.issueFilters.reportado = [];
+        state.issueFilters.proyecto = [];
+        delete state.issueFilters._overdue;
+        const searchEl = $('#issueSearch');
+        if (searchEl) searchEl.value = '';
+        renderIssues();
+        showToast('info', '🔄 Filtros limpiados', '');
+    }
+
+    function updateIssueFilterChips() {
+        const bar = $('#issueActiveFiltersBar');
+        const container = $('#issueActiveFiltersChips');
+        if (!bar || !container) return;
+        const f = state.issueFilters;
+        const chips = [];
+        const labelMap = { estado: 'Estado', severidad: 'Severidad', asignado: 'Asignado', reportado: 'Reportado', proyecto: 'Proyecto' };
+        ['estado', 'severidad', 'severidad', 'asignado', 'reportado', 'proyecto'].forEach(key => {
+            (f[key] || []).forEach(v => {
+                let label = v;
+                if (key === 'asignado' || key === 'reportado') {
+                    const m = state.team.find(x => x.id === v);
+                    if (m) label = m.nombre;
+                    if (v === '__unassigned__') label = 'Sin asignar';
+                }
+                chips.push(`<span class="filter-chip">
+                    <span class="chip-type">${labelMap[key]}:</span>
+                    <span>${escapeHTML(label)}</span>
+                    <button class="chip-remove" onclick="removeIssueFilter('${key}','${escapeHTML(v).replace(/'/g, "\\'")}')">✕</button>
+                </span>`);
+            });
+        });
+        if (f._overdue) {
+            chips.push(`<span class="filter-chip">
+                <span class="chip-type">Vencidos:</span>
+                <span>&gt;7 días</span>
+                <button class="chip-remove" onclick="filterIssuesShowOverdue()">✕</button>
+            </span>`);
+        }
+        if (chips.length > 0) {
+            bar.classList.remove('hidden');
+            container.innerHTML = chips.join('');
+        } else {
+            bar.classList.add('hidden');
+            container.innerHTML = '';
+        }
+    }
+
+    function removeIssueFilter(field, value) {
+        if (state.issueFilters[field]) {
+            state.issueFilters[field] = state.issueFilters[field].filter(v => v !== value);
+        }
+        renderIssues();
+    }
+
+    /* === Export CSV === */
+    function exportIssuesCSV() {
+        if (state.issues.length === 0) {
+            showToast('warning', 'Sin issues', 'No hay nada que exportar.');
+            return;
+        }
+        const headers = ['ID', 'Título', 'Descripción', 'Severidad', 'Estado', 'Reportado por', 'Asignado a', 'Proyecto', 'Fecha reporte', 'Fecha solución', 'Días abierto'];
+        const rows = state.issues.map(i => {
+            const { days } = daysSinceReport(i);
+            const esc = (s) => `"${String(s || '').replace(/"/g, '""')}"`;
+            return [
+                esc(i.id),
+                esc(i.titulo),
+                esc(i.descripcion),
+                esc(i.severidad),
+                esc(i.estado),
+                esc(getIssueReporterName(i)),
+                esc(getIssueAssigneeName(i)),
+                esc(i.proyecto || ''),
+                esc(i.fechaReporte ? new Date(i.fechaReporte).toLocaleDateString('es-ES') : ''),
+                esc(i.fechaSolucion ? new Date(i.fechaSolucion).toLocaleDateString('es-ES') : ''),
+                days
+            ].join(',');
+        });
+        const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `issues-${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('success', '📥 Exportado', `${state.issues.length} issues a CSV`);
+    }
+
     // Expose functions used by inline onclick handlers
     Object.assign(window, {
         openTaskModal, closeTaskModal, editTask, saveTask, changeTaskState, confirmDeleteTask,
@@ -13400,7 +14807,14 @@
         // v27 — Quick actions desde cards y detalle
         quickDeleteHabit, quickArchiveHabit, deleteHabitFromDetail, archiveHabitFromDetail,
         // v28 — Widgets clickeables
-        filterFromWidget, updateKpiActiveStates, showAvanceBreakdown
+        filterFromWidget, updateKpiActiveStates, showAvanceBreakdown,
+        // v29 — Issues
+        openIssueModal, closeIssueModal, saveIssue, confirmDeleteIssue, confirmDeleteIssueFromModal,
+        openIssueDetail, closeIssueDetailModal, editIssueFromDetail,
+        addIssueComment, deleteIssueComment,
+        setIssueView, renderIssues, renderIssuesKpis, renderIssuesInsights,
+        filterIssuesByKpi, filterIssuesShowOverdue, clearIssueFilters, removeIssueFilter,
+        exportIssuesCSV
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
