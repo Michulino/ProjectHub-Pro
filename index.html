@@ -719,23 +719,57 @@
         }
 
         /* =================================================================
-           v32: RESPONSIVE FIX — la tabla scrollea DENTRO de su card
+           v33: SIN SCROLL HORIZONTAL — todas las columnas visibles siempre.
+           La tabla se comprime y el sidebar cede espacio (1 columna angosta).
            ================================================================= */
         @media (min-width: 768px) {
-            /* Ancho mínimo legible: si no cabe, aparece scroll horizontal
-               dentro de la card (no en toda la página) */
-            #tasksTable { min-width: 1000px; width: 100%; }
+            #tasksTable { width: 100%; }
+            #tasksTable th, #tasksTable td { padding: 9px 7px; }
         }
-        /* Pantallas medianas-grandes (1280-1550px): sidebar más angosto
-           y tipografía de tabla ligeramente compacta */
-        @media (max-width: 1550px) and (min-width: 1280px) {
-            .main-layout { grid-template-columns: minmax(0, 1fr) 270px; }
-            .sidebar { grid-template-columns: 1fr; }
-            #tasksTable { font-size: 0.92em; }
-            #tasksTable th, #tasksTable td { padding-left: 8px; padding-right: 8px; }
-            .kpi-card { padding: 12px; }
-            .kpi-value { font-size: 1.5em; }
+
+        /* Pantallas hasta 1750px: sidebar compacto de UNA columna
+           para que la tabla tenga el máximo espacio posible */
+        @media (max-width: 1750px) and (min-width: 1280px) {
+            .main-layout { grid-template-columns: minmax(0, 1fr) 195px; gap: 14px; }
+            .sidebar { grid-template-columns: 1fr; gap: 8px; }
+            .kpi-card { padding: 10px 12px; gap: 8px; }
+            .kpi-value { font-size: 1.35em; }
+            .kpi-label { font-size: 0.66em; }
+            .kpi-icon { width: 30px; height: 30px; }
+
+            /* Tabla compacta: todo cabe sin scroll */
+            #tasksTable { font-size: 0.86em; }
+            #tasksTable th, #tasksTable td { padding: 7px 5px; }
+            #tasksTable th .th-label { font-size: 0.92em; }
+
+            /* Avance: solo el número, sin barra */
+            .avance-cell .tab-track { display: none; }
+            th.avance-col, .avance-cell { min-width: 42px; }
+
+            /* Acciones compactas */
+            .task-actions { gap: 2px; }
+            .action-btn { width: 25px; height: 25px; }
+            .timer-btn { width: 25px; height: 25px; }
+            .action-btn svg { width: 13px; height: 13px; }
+
+            /* Badges compactos */
+            .priority-badge { padding: 2px 7px; font-size: 0.74em; }
+            .task-project { padding: 2px 8px; font-size: 0.76em; }
+            .review-badge { font-size: 0.74em; padding: 2px 7px; }
+            .state-select { font-size: 0.82em; padding: 4px 6px; }
+            .task-id { font-size: 0.78em; }
+
+            /* Título: permitir 2 líneas máximo; notas más angostas */
+            .task-title { line-height: 1.3; }
+            .task-notes-preview { max-width: 230px; }
+            .issue-desc { display: none; }
         }
+
+        /* Pantallas muy anchas (>1750px): diseño original amplio */
+        @media (min-width: 1751px) {
+            .main-layout { grid-template-columns: minmax(0, 1fr) 320px; }
+        }
+
         /* Asegurar que insights y vistas anchas nunca desborden la página */
         .insights-row { min-width: 0; }
         .insights-row > * { min-width: 0; }
