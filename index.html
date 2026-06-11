@@ -377,10 +377,15 @@
            ================================================================= */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            /* v32: minmax(0,1fr) permite que la columna de contenido se encoja
+               en lugar de empujar el sidebar fuera de la pantalla */
+            grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
             gap: 20px;
             margin-bottom: 20px;
         }
+        /* v32: hijos del grid deben poder encogerse */
+        .tasks-container { min-width: 0; }
+        .sidebar { min-width: 0; }
 
         /* =================================================================
            6. SIDEBAR / KPI CARDS
@@ -712,6 +717,31 @@
             overflow: auto;
             border-radius: var(--radius);
         }
+
+        /* =================================================================
+           v32: RESPONSIVE FIX — la tabla scrollea DENTRO de su card
+           ================================================================= */
+        @media (min-width: 768px) {
+            /* Ancho mínimo legible: si no cabe, aparece scroll horizontal
+               dentro de la card (no en toda la página) */
+            #tasksTable { min-width: 1000px; width: 100%; }
+        }
+        /* Pantallas medianas-grandes (1280-1550px): sidebar más angosto
+           y tipografía de tabla ligeramente compacta */
+        @media (max-width: 1550px) and (min-width: 1280px) {
+            .main-layout { grid-template-columns: minmax(0, 1fr) 270px; }
+            .sidebar { grid-template-columns: 1fr; }
+            #tasksTable { font-size: 0.92em; }
+            #tasksTable th, #tasksTable td { padding-left: 8px; padding-right: 8px; }
+            .kpi-card { padding: 12px; }
+            .kpi-value { font-size: 1.5em; }
+        }
+        /* Asegurar que insights y vistas anchas nunca desborden la página */
+        .insights-row { min-width: 0; }
+        .insights-row > * { min-width: 0; }
+        .week-view, .issues-kanban, .kanban-board, .month-grid { max-width: 100%; }
+        .tasks-view, .issues-view, .habits-view { min-width: 0; }
+        html, body { overflow-x: hidden; }
 
         /* Scrollbar */
         .tasks-body::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -3566,7 +3596,8 @@
            ================================================================= */
         .insights-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            /* v32: auto-fit se adapta a 4, 2 o 1 columnas según el ancho */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
             margin-top: 4px;
