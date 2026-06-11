@@ -5208,6 +5208,15 @@
         }
         .kanban-avance .ka-fill.done { background: var(--success); }
 
+        /* v31b: columna Avance en tabla */
+        th.avance-col { min-width: 100px; }
+        .avance-cell { min-width: 100px; }
+        @media (max-width: 1100px) and (min-width: 769px) {
+            /* En pantallas medianas, compactar: solo el número sin barra */
+            .avance-cell .tab-track { display: none; }
+            th.avance-col, .avance-cell { min-width: 48px; }
+        }
+
         /* Print */
         @media print {
             .toolbar, .app-header-actions, .task-actions, .sidebar { display: none !important; }
@@ -6470,6 +6479,7 @@
                                         </button>
                                     </span>
                                 </th>
+                                <th class="sortable avance-col" data-sort="avance"><span class="th-inner"><span class="th-label">Avance <span class="sort-indicator">↕</span></span></span></th>
                                 <th class="sortable" data-sort="fecha_vencimiento"><span class="th-inner"><span class="th-label">Vence <span class="sort-indicator">↕</span></span></span></th>
                                 <th class="sortable" data-sort="ultima_revision">
                                     <span class="th-inner">
@@ -8023,6 +8033,7 @@
             const view = localStorage.getItem(STORAGE.view);
             if (view === 'kanban') state.view = 'kanban';
             else if (view === 'week') state.view = 'week';
+            else if (view === 'month') state.view = 'month';
 
             const sort = localStorage.getItem(STORAGE.sort);
             if (sort) state.sort = JSON.parse(sort);
@@ -8331,6 +8342,7 @@
             let va = a[field], vb = b[field];
             if (field === 'prioridad') { va = priOrder[va] ?? 99; vb = priOrder[vb] ?? 99; }
             else if (field === 'estado') { va = estOrder[va] ?? 99; vb = estOrder[vb] ?? 99; }
+            else if (field === 'avance') { va = getTaskAvance(a); vb = getTaskAvance(b); }
             else if (field === 'fecha_vencimiento') {
                 va = parseDate(va)?.getTime() ?? Infinity;
                 vb = parseDate(vb)?.getTime() ?? Infinity;
@@ -8865,7 +8877,7 @@
                 </button>`;
             }
             tbody.innerHTML = `
-                <tr><td colspan="9">
+                <tr><td colspan="10">
                     <div class="empty-state">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                         <h3>${title}</h3>
@@ -8892,7 +8904,6 @@
                         ${escapeHTML(task.titulo)}
                         ${checklistBadgeHTML(task)}
                         ${notes}
-                        ${avanceBarHTML(task)}
                         ${tagsRowHTML(task)}
                     </td>
                     <td data-label="Proyecto"><span class="task-project">${escapeHTML(task.proyecto)}</span></td>
@@ -8901,6 +8912,7 @@
                     <td data-label="Estado">
                         ${renderStateSelect(task)}
                     </td>
+                    <td data-label="Avance" class="avance-cell">${avanceCellHTML(task)}</td>
                     ${dateCellHTML(task)}
                     <td data-label="Revisión">${reviewBadgeHTML(task)}</td>
                     <td class="task-actions-cell no-label">
@@ -9304,6 +9316,16 @@
         if (pct === 0) return '';
         const done = pct === 100;
         return `<div class="task-avance-bar" title="Avance: ${pct}%">
+            <span class="tab-track"><span class="tab-fill ${done ? 'done' : ''}" style="width: ${pct}%;"></span></span>
+            <span class="tab-pct ${done ? 'done' : ''}">${pct}%</span>
+        </div>`;
+    }
+
+    /* v31b: celda dedicada de avance (siempre visible, columna propia) */
+    function avanceCellHTML(task) {
+        const pct = getTaskAvance(task);
+        const done = pct === 100;
+        return `<div class="task-avance-bar" style="margin-top: 0; min-width: 90px;" title="Avance: ${pct}% — edita la tarea para cambiarlo">
             <span class="tab-track"><span class="tab-fill ${done ? 'done' : ''}" style="width: ${pct}%;"></span></span>
             <span class="tab-pct ${done ? 'done' : ''}">${pct}%</span>
         </div>`;
