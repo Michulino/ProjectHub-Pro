@@ -12361,15 +12361,15 @@
 
     /* === Bootstrap inicial: decide qué pantalla mostrar === */
     function authBootstrap() {
-        // 1. ¿Password OK?
-        if (!isPasswordTokenValid()) {
-            showLockScreen();
-            return;
-        }
+        // === MODO PREVIEW: bypass de auth ===
         auth.passwordOk = true;
+        auth.googleOk = true;
+        auth.userEmail = 'preview@local';
+        auth.userName = 'Vista Previa';
         document.getElementById('lockScreen').classList.add('hidden');
-        // 2. ¿Google OK?
-        showAuthGate();
+        document.getElementById('authModal').classList.remove('show');
+        enterApp();
+        return;
     }
 
     /* ===================================================================
