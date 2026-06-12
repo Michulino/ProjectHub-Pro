@@ -719,16 +719,61 @@
         }
 
         /* =================================================================
-           v33: SIN SCROLL HORIZONTAL — todas las columnas visibles siempre.
-           La tabla se comprime y el sidebar cede espacio (1 columna angosta).
+           v34: CERO SCROLL HORIZONTAL — table-layout: fixed.
+           La tabla SIEMPRE mide 100% del contenedor; las columnas tienen
+           ancho asignado y el contenido se adapta (wrap o ellipsis).
+           Es matemáticamente imposible que desborde.
            ================================================================= */
         @media (min-width: 768px) {
-            #tasksTable { width: 100%; }
-            #tasksTable th, #tasksTable td { padding: 9px 7px; }
+            #tasksTable {
+                table-layout: fixed;
+                width: 100%;
+            }
+            /* Anchos por columna (el Título absorbe todo el espacio restante) */
+            #tasksTable thead th:nth-child(1)  { width: 48px; }   /* ID */
+            /* nth-child(2) Título: sin width = flexible */
+            #tasksTable thead th:nth-child(3)  { width: 92px; }   /* Proyecto */
+            #tasksTable thead th:nth-child(4)  { width: 118px; }  /* Responsable */
+            #tasksTable thead th:nth-child(5)  { width: 78px; }   /* Prioridad */
+            #tasksTable thead th:nth-child(6)  { width: 112px; }  /* Estado */
+            #tasksTable thead th:nth-child(7)  { width: 66px; }   /* Avance */
+            #tasksTable thead th:nth-child(8)  { width: 86px; }   /* Vence */
+            #tasksTable thead th:nth-child(9)  { width: 68px; }   /* Revisión */
+            #tasksTable thead th:nth-child(10) { width: 122px; }  /* Acciones */
+
+            #tasksTable th, #tasksTable td {
+                padding: 9px 6px;
+                overflow: hidden;
+            }
+            /* El título hace wrap (nunca se pierde) */
+            .task-title { white-space: normal; word-break: break-word; }
+            /* Chips y nombres largos: ellipsis */
+            .responsable-chip {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .task-project {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .task-notes-preview { max-width: 100%; }
+            /* Selects de estado ocupan su celda sin desbordar */
+            #tasksTable .state-select { width: 100%; max-width: 100%; }
+            /* Avance compacto: solo número (la barra completa vive en el modal) */
+            .avance-cell .tab-track { display: none; }
+            .avance-cell .tab-pct { font-size: 0.85em; }
+            /* Vence: permitir salto de línea para "Vencida hace Xd" */
+            .task-date, .task-date .days { white-space: normal; }
         }
 
-        /* Pantallas hasta 1750px: sidebar compacto de UNA columna
-           para que la tabla tenga el máximo espacio posible */
+        /* Pantallas hasta 1750px: sidebar de UNA columna angosta
+           para máximo espacio de tabla */
         @media (max-width: 1750px) and (min-width: 1280px) {
             .main-layout { grid-template-columns: minmax(0, 1fr) 195px; gap: 14px; }
             .sidebar { grid-template-columns: 1fr; gap: 8px; }
@@ -737,37 +782,38 @@
             .kpi-label { font-size: 0.66em; }
             .kpi-icon { width: 30px; height: 30px; }
 
-            /* Tabla compacta: todo cabe sin scroll */
             #tasksTable { font-size: 0.86em; }
-            #tasksTable th, #tasksTable td { padding: 7px 5px; }
-            #tasksTable th .th-label { font-size: 0.92em; }
+            #tasksTable th, #tasksTable td { padding: 7px 4px; }
+            #tasksTable th .th-label { font-size: 0.9em; }
 
-            /* Avance: solo el número, sin barra */
-            .avance-cell .tab-track { display: none; }
-            th.avance-col, .avance-cell { min-width: 42px; }
+            /* Columnas más compactas en este rango */
+            #tasksTable thead th:nth-child(1)  { width: 42px; }
+            #tasksTable thead th:nth-child(3)  { width: 80px; }
+            #tasksTable thead th:nth-child(4)  { width: 100px; }
+            #tasksTable thead th:nth-child(5)  { width: 68px; }
+            #tasksTable thead th:nth-child(6)  { width: 100px; }
+            #tasksTable thead th:nth-child(7)  { width: 46px; }
+            #tasksTable thead th:nth-child(8)  { width: 76px; }
+            #tasksTable thead th:nth-child(9)  { width: 58px; }
+            #tasksTable thead th:nth-child(10) { width: 106px; }
 
-            /* Acciones compactas */
             .task-actions { gap: 2px; }
-            .action-btn { width: 25px; height: 25px; }
-            .timer-btn { width: 25px; height: 25px; }
-            .action-btn svg { width: 13px; height: 13px; }
-
-            /* Badges compactos */
-            .priority-badge { padding: 2px 7px; font-size: 0.74em; }
-            .task-project { padding: 2px 8px; font-size: 0.76em; }
-            .review-badge { font-size: 0.74em; padding: 2px 7px; }
-            .state-select { font-size: 0.82em; padding: 4px 6px; }
+            .action-btn, .timer-btn { width: 24px; height: 24px; }
+            .action-btn svg { width: 12px; height: 12px; }
+            .priority-badge { padding: 2px 6px; font-size: 0.74em; }
+            .review-badge { font-size: 0.74em; padding: 2px 6px; }
+            .state-select { font-size: 0.8em; padding: 4px 4px; }
             .task-id { font-size: 0.78em; }
-
-            /* Título: permitir 2 líneas máximo; notas más angostas */
             .task-title { line-height: 1.3; }
-            .task-notes-preview { max-width: 230px; }
             .issue-desc { display: none; }
         }
 
-        /* Pantallas muy anchas (>1750px): diseño original amplio */
+        /* Pantallas muy anchas (>1750px): diseño amplio */
         @media (min-width: 1751px) {
             .main-layout { grid-template-columns: minmax(0, 1fr) 320px; }
+            /* Con espacio de sobra, mostrar la barra de avance completa */
+            .avance-cell .tab-track { display: inline-block; }
+            #tasksTable thead th:nth-child(7) { width: 95px; }
         }
 
         /* Asegurar que insights y vistas anchas nunca desborden la página */
@@ -1207,6 +1253,23 @@
             overflow-y: auto;
             flex: 1;
         }
+        /* v36 FIX: los modales con <form> desbordaban porque el form
+           no era flex — el body no podía scrollear y el contenido se
+           salía del modal (botones Guardar invisibles) */
+        .modal { overflow: hidden; }
+        .modal > form {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            flex: 1;
+            overflow: hidden;
+        }
+        .modal > form .modal-body {
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        .modal > form .modal-footer { flex-shrink: 0; }
 
         .modal-footer {
             padding: 14px 24px;
@@ -5282,6 +5345,184 @@
             th.avance-col, .avance-cell { min-width: 48px; }
         }
 
+        /* =================================================================
+           v35: POPOVER DE AVANCE (edición rápida desde la tabla)
+           ================================================================= */
+        .avance-editable {
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 3px 4px;
+            margin: -3px -4px;
+            transition: background var(--transition-fast);
+        }
+        .avance-editable:hover {
+            background: var(--primary-light);
+        }
+        .avance-editable:hover .tab-pct {
+            color: var(--primary);
+        }
+        .avance-popover {
+            position: fixed;
+            z-index: 1000;
+            width: 260px;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 12px;
+            animation: pop-in 150ms ease;
+        }
+        .avance-popover .ap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .avance-popover .ap-title {
+            font-size: 0.78em;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .avance-popover .ap-value {
+            font-size: 1.1em;
+            font-weight: 800;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .avance-popover input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .avance-popover .ap-quick {
+            display: flex;
+            gap: 4px;
+        }
+        .avance-popover .ap-quick button {
+            flex: 1;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5px 0;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all var(--transition-fast);
+        }
+        .avance-popover .ap-quick button:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .avance-popover .ap-quick button.ap-complete:hover {
+            background: rgba(34,197,94,0.15);
+            color: #15803d;
+            border-color: #15803d;
+        }
+
+        /* =================================================================
+           v36: BLOQUE DE AVANCE DESTACADO EN EL MODAL
+           ================================================================= */
+        .avance-feature {
+            background: linear-gradient(135deg, var(--primary-light), transparent);
+            border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            margin-bottom: 18px;
+        }
+        .avance-feature .af-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avance-feature .af-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+        }
+        .avance-feature .af-value {
+            font-size: 1.7em;
+            font-weight: 800;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        .avance-feature input[type="range"] {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--primary) var(--af-fill, 0%), var(--bg-muted) var(--af-fill, 0%));
+            outline: none;
+            cursor: pointer;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+        .avance-feature input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg-elev);
+            box-shadow: var(--shadow-md);
+            cursor: grab;
+        }
+        .avance-feature input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg-elev);
+            box-shadow: var(--shadow-md);
+            cursor: grab;
+        }
+        .avance-feature .af-quick {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .avance-feature .af-quick button {
+            flex: 1;
+            min-width: 48px;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 0;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all var(--transition-fast);
+        }
+        .avance-feature .af-quick button:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+        .avance-feature .af-quick button.af-done:hover {
+            background: rgba(34,197,94,0.15);
+            color: #15803d;
+            border-color: #15803d;
+        }
+        .avance-feature .af-quick button.af-checklist {
+            flex: 1.6;
+        }
+
         /* Print */
         @media print {
             .toolbar, .app-header-actions, .task-actions, .sidebar { display: none !important; }
@@ -7328,6 +7569,27 @@
                         </div>
                     </div>
 
+                    <!-- v36: AVANCE destacado (banda visual prominente) -->
+                    <div class="avance-feature">
+                        <div class="af-top">
+                            <span class="af-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                                Avance de la tarea
+                            </span>
+                            <span class="af-value" id="taskAvanceLabel">0%</span>
+                        </div>
+                        <input type="range" id="taskAvance" min="0" max="100" step="5" value="0"
+                            oninput="updateAvanceLabel(this.value)" aria-label="Porcentaje de avance">
+                        <div class="af-quick">
+                            <button type="button" onclick="setAvanceQuick(0)">0%</button>
+                            <button type="button" onclick="setAvanceQuick(25)">25%</button>
+                            <button type="button" onclick="setAvanceQuick(50)">50%</button>
+                            <button type="button" onclick="setAvanceQuick(75)">75%</button>
+                            <button type="button" onclick="setAvanceQuick(100)" class="af-done">100%</button>
+                            <button type="button" id="avanceFromChecklistBtn" onclick="setAvanceFromChecklist()" style="display:none;" class="af-checklist">☑ Usar checklist</button>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Responsable</label>
                         <div class="responsable-select">
@@ -7367,23 +7629,7 @@
                         </div>
                     </div>
 
-                    <!-- v31: Porcentaje de avance -->
-                    <div class="form-group">
-                        <label for="taskAvance">📈 Avance: <span id="taskAvanceLabel" style="color: var(--primary); font-weight: 800;">0%</span>
-                            <button type="button" class="btn-link-sm" id="avanceFromChecklistBtn" onclick="setAvanceFromChecklist()" style="display:none;">usar checklist</button>
-                        </label>
-                        <div class="avance-slider-row">
-                            <input type="range" id="taskAvance" min="0" max="100" step="5" value="0"
-                                oninput="updateAvanceLabel(this.value)">
-                            <div class="avance-quick-btns">
-                                <button type="button" onclick="setAvanceQuick(0)">0</button>
-                                <button type="button" onclick="setAvanceQuick(25)">25</button>
-                                <button type="button" onclick="setAvanceQuick(50)">50</button>
-                                <button type="button" onclick="setAvanceQuick(75)">75</button>
-                                <button type="button" onclick="setAvanceQuick(100)">100</button>
-                            </div>
-                        </div>
-                    </div>
+                                        <!-- v36: el avance se movió arriba, junto al estado -->
 
                     <!-- v30: Comentarios (solo en edición) -->
                     <div class="form-group hidden" id="taskCommentsSection">
@@ -9357,6 +9603,9 @@
     function updateAvanceLabel(val) {
         const label = $('#taskAvanceLabel');
         if (label) label.textContent = `${val}%`;
+        // v36: relleno visual del slider
+        const slider = $('#taskAvance');
+        if (slider && slider.style) slider.style.setProperty('--af-fill', val + '%');
     }
     function setAvanceQuick(val) {
         const slider = $('#taskAvance');
@@ -9386,14 +9635,113 @@
         </div>`;
     }
 
-    /* v31b: celda dedicada de avance (siempre visible, columna propia) */
+    /* v31b: celda dedicada de avance (siempre visible, columna propia)
+       v35: clickeable — abre popover para editar sin entrar al modal */
     function avanceCellHTML(task) {
         const pct = getTaskAvance(task);
         const done = pct === 100;
-        return `<div class="task-avance-bar" style="margin-top: 0; min-width: 90px;" title="Avance: ${pct}% — edita la tarea para cambiarlo">
+        return `<div class="task-avance-bar avance-editable" style="margin-top: 0;" 
+            onclick="event.stopPropagation(); openAvancePopover(event, '${task.id}')"
+            title="Click para editar el avance">
             <span class="tab-track"><span class="tab-fill ${done ? 'done' : ''}" style="width: ${pct}%;"></span></span>
             <span class="tab-pct ${done ? 'done' : ''}">${pct}%</span>
         </div>`;
+    }
+
+    /* === v35: POPOVER DE EDICIÓN RÁPIDA DE AVANCE === */
+    let _avancePopover = null;
+    let _avancePopoverTaskId = null;
+
+    function openAvancePopover(event, taskId) {
+        const task = state.tasks.find(t => t.id === taskId);
+        if (!task) return;
+        // Tareas completadas siempre están al 100%
+        if (isStateDone(task.estado)) {
+            showToast('info', '✓ Tarea completada', 'Las tareas completadas siempre muestran 100%. Reábrela para ajustar el avance.');
+            return;
+        }
+        closeAvancePopover();
+        _avancePopoverTaskId = taskId;
+        const current = getTaskAvance(task);
+
+        const pop = document.createElement('div');
+        pop.className = 'avance-popover';
+        pop.id = 'avancePopover';
+        pop.innerHTML = `
+            <div class="ap-header">
+                <span class="ap-title">${escapeHTML(task.titulo.substring(0, 40))}${task.titulo.length > 40 ? '…' : ''}</span>
+                <span class="ap-value" id="apValue">${current}%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="${current}" id="apSlider"
+                oninput="document.getElementById('apValue').textContent = this.value + '%'"
+                onchange="applyAvanceFromPopover(parseInt(this.value, 10))">
+            <div class="ap-quick">
+                <button onclick="applyAvanceFromPopover(0)">0%</button>
+                <button onclick="applyAvanceFromPopover(25)">25%</button>
+                <button onclick="applyAvanceFromPopover(50)">50%</button>
+                <button onclick="applyAvanceFromPopover(75)">75%</button>
+                <button onclick="applyAvanceFromPopover(100)" class="ap-complete">100%</button>
+            </div>
+        `;
+        document.body.appendChild(pop);
+        _avancePopover = pop;
+
+        // Posicionar cerca de la celda, sin salirse del viewport
+        const rect = event.currentTarget.getBoundingClientRect();
+        const popW = 260, popH = 120;
+        let left = rect.left - 60;
+        let top = rect.bottom + 6;
+        if (left + popW > window.innerWidth - 10) left = window.innerWidth - popW - 10;
+        if (left < 10) left = 10;
+        if (top + popH > window.innerHeight - 10) top = rect.top - popH - 6;
+        pop.style.left = left + 'px';
+        pop.style.top = top + 'px';
+
+        // Cerrar con click fuera o Esc
+        setTimeout(() => {
+            document.addEventListener('click', _avanceOutsideClick);
+            document.addEventListener('keydown', _avanceEscClose);
+        }, 50);
+    }
+
+    function _avanceOutsideClick(e) {
+        if (_avancePopover && !_avancePopover.contains(e.target)) closeAvancePopover();
+    }
+    function _avanceEscClose(e) {
+        if (e.key === 'Escape') closeAvancePopover();
+    }
+    function closeAvancePopover() {
+        if (_avancePopover) {
+            _avancePopover.remove();
+            _avancePopover = null;
+        }
+        _avancePopoverTaskId = null;
+        document.removeEventListener('click', _avanceOutsideClick);
+        document.removeEventListener('keydown', _avanceEscClose);
+    }
+
+    function applyAvanceFromPopover(value) {
+        const task = state.tasks.find(t => t.id === _avancePopoverTaskId);
+        if (!task) { closeAvancePopover(); return; }
+        task.avance = Math.max(0, Math.min(100, value));
+        // Si llega a 100, ofrecer marcarla como completada
+        if (task.avance === 100 && !isStateDone(task.estado)) {
+            const doneState = state.states.find(s => getStateType(s.nombre) === 'done');
+            const doneName = doneState ? doneState.nombre : null;
+            closeAvancePopover();
+            saveToStorage();
+            renderTasks();
+            if (doneName) {
+                showToast('success', '🎉 100% de avance', `¿Marcar "${task.titulo.substring(0, 30)}" como ${doneName}? Usa el dropdown de Estado.`, 6000);
+            } else {
+                showToast('success', '🎉 100% de avance', task.titulo.substring(0, 40));
+            }
+            return;
+        }
+        closeAvancePopover();
+        saveToStorage();
+        renderTasks();
+        showToast('success', `📈 Avance: ${task.avance}%`, task.titulo.substring(0, 40));
     }
 
     /* === v30: Helpers de tabla (checklist badge, tags) === */
@@ -16077,7 +16425,9 @@
         changeMonth, openWeeklyReport, closeReportModal, copyReportToClipboard,
         restoreArchivedTasks,
         // v31 — Porcentaje de avance
-        updateAvanceLabel, setAvanceQuick, setAvanceFromChecklist
+        updateAvanceLabel, setAvanceQuick, setAvanceFromChecklist,
+        // v35 — Popover de avance en tabla
+        openAvancePopover, closeAvancePopover, applyAvanceFromPopover
     });
 
     // Inicializar Drive SDK (no abre nada todavía)
