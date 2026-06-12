@@ -677,8 +677,9 @@
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            height: 720px;
-            min-height: 480px;
+            /* v37: altura natural — la página entera scrollea, no la caja */
+            height: auto;
+            min-height: 380px;
         }
 
         .tasks-header {
@@ -714,8 +715,16 @@
 
         .tasks-body {
             flex: 1;
-            overflow: auto;
+            /* v37: sin scroll interno — un solo scroll (el de la página) */
+            overflow: visible;
             border-radius: var(--radius);
+        }
+        /* v37b: sin encabezados sticky — el header scrollea normal con la página
+           y los filtros de columna funcionan sin interferencias */
+        #tasksTable thead,
+        .issues-table thead,
+        .issues-table thead th {
+            position: static;
         }
 
         /* =================================================================
@@ -729,17 +738,29 @@
                 table-layout: fixed;
                 width: 100%;
             }
-            /* Anchos por columna (el Título absorbe todo el espacio restante) */
-            #tasksTable thead th:nth-child(1)  { width: 48px; }   /* ID */
-            /* nth-child(2) Título: sin width = flexible */
-            #tasksTable thead th:nth-child(3)  { width: 92px; }   /* Proyecto */
-            #tasksTable thead th:nth-child(4)  { width: 118px; }  /* Responsable */
-            #tasksTable thead th:nth-child(5)  { width: 78px; }   /* Prioridad */
-            #tasksTable thead th:nth-child(6)  { width: 112px; }  /* Estado */
-            #tasksTable thead th:nth-child(7)  { width: 66px; }   /* Avance */
-            #tasksTable thead th:nth-child(8)  { width: 86px; }   /* Vence */
-            #tasksTable thead th:nth-child(9)  { width: 68px; }   /* Revisión */
-            #tasksTable thead th:nth-child(10) { width: 122px; }  /* Acciones */
+            /* v38: anchos mixtos — px para columnas rígidas, % para las que
+               escalan con la pantalla (así nunca se aprietan en monitores anchos) */
+            #tasksTable thead th:nth-child(1)  { width: 46px; }    /* ID */
+            /* nth-child(2) Título: sin width = absorbe el resto */
+            #tasksTable thead th:nth-child(3)  { width: 10%; }     /* Proyecto */
+            #tasksTable thead th:nth-child(4)  { width: 12%; }     /* Responsable */
+            #tasksTable thead th:nth-child(5)  { width: 8.5%; }    /* Prioridad */
+            #tasksTable thead th:nth-child(6)  { width: 11%; }     /* Estado */
+            #tasksTable thead th:nth-child(7)  { width: 64px; }    /* Avance */
+            #tasksTable thead th:nth-child(8)  { width: 8.5%; }    /* Vence */
+            #tasksTable thead th:nth-child(9)  { width: 7.5%; }    /* Revisión */
+            #tasksTable thead th:nth-child(10) { width: 118px; }   /* Acciones */
+
+            /* Encabezados: el texto se trunca con "..." antes de montarse
+               sobre los iconos o la columna vecina */
+            #tasksTable .th-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                min-width: 0;
+            }
+            #tasksTable .th-inner { gap: 3px; min-width: 0; }
+            #tasksTable .col-filter-btn { flex-shrink: 0; }
 
             #tasksTable th, #tasksTable td {
                 padding: 9px 6px;
@@ -786,15 +807,9 @@
             #tasksTable th, #tasksTable td { padding: 7px 4px; }
             #tasksTable th .th-label { font-size: 0.9em; }
 
-            /* Columnas más compactas en este rango */
+            /* v38: los anchos % escalan solos; solo ajustar columnas rígidas */
             #tasksTable thead th:nth-child(1)  { width: 42px; }
-            #tasksTable thead th:nth-child(3)  { width: 80px; }
-            #tasksTable thead th:nth-child(4)  { width: 100px; }
-            #tasksTable thead th:nth-child(5)  { width: 68px; }
-            #tasksTable thead th:nth-child(6)  { width: 100px; }
             #tasksTable thead th:nth-child(7)  { width: 46px; }
-            #tasksTable thead th:nth-child(8)  { width: 76px; }
-            #tasksTable thead th:nth-child(9)  { width: 58px; }
             #tasksTable thead th:nth-child(10) { width: 106px; }
 
             .task-actions { gap: 2px; }
@@ -821,7 +836,7 @@
         .insights-row > * { min-width: 0; }
         .week-view, .issues-kanban, .kanban-board, .month-grid { max-width: 100%; }
         .tasks-view, .issues-view, .habits-view { min-width: 0; }
-        html, body { overflow-x: hidden; }
+        /* v37: overflow-x:hidden eliminado (rompía sticky); el layout fixed ya previene desbordes */
 
         /* Scrollbar */
         .tasks-body::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -5893,8 +5908,8 @@
             }
             .tasks-container {
                 height: auto;
-                min-height: 480px;
-                max-height: 70vh;
+                min-height: 380px;
+                max-height: none;
             }
             .sidebar {
                 display: grid;
@@ -5926,7 +5941,7 @@
             }
             .tasks-container {
                 padding: 16px;
-                max-height: 65vh;
+                max-height: none;
             }
             /* Insights row: 2 columnas (heatmap full-width abajo) */
             .insights-row {
