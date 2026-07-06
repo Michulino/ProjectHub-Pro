@@ -5538,6 +5538,86 @@
             flex: 1.6;
         }
 
+        /* =================================================================
+           v39: CHIPS DE ACUMULACIÓN EN HÁBITOS CUANTITATIVOS
+           ================================================================= */
+        .habit-quick-add {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .habit-add-chip {
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-weight: 800;
+            color: var(--text-muted);
+            transition: all var(--transition-fast);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .habit-add-chip:hover {
+            background: var(--habit-color, var(--primary));
+            color: white;
+            border-color: var(--habit-color, var(--primary));
+            transform: translateY(-1px);
+        }
+        .habit-add-chip:active {
+            transform: scale(0.94);
+        }
+        .habit-progress-mini {
+            flex: 1;
+            height: 5px;
+            background: var(--bg-muted);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-left: 4px;
+            min-width: 30px;
+        }
+        .habit-progress-mini .hpm-fill {
+            display: block;
+            height: 100%;
+            background: var(--habit-color, var(--primary));
+            border-radius: 999px;
+            transition: width 300ms ease;
+        }
+        .habit-progress-mini .hpm-fill.done {
+            background: var(--success);
+        }
+
+        .habit-custom-wrap {
+            display: inline-flex;
+            align-items: stretch;
+            gap: 0;
+        }
+        .habit-custom-input {
+            width: 54px;
+            padding: 4px 7px;
+            border: 1px solid var(--border);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            background: var(--bg-elev);
+            color: var(--text);
+            font-size: 0.78em;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .habit-custom-input:focus {
+            outline: none;
+            border-color: var(--habit-color, var(--primary));
+        }
+        .habit-custom-input::placeholder {
+            color: var(--text-soft);
+            font-weight: 400;
+        }
+        .habit-chip-go {
+            border-radius: 0 8px 8px 0 !important;
+            padding: 4px 8px !important;
+        }
+
         /* Print */
         @media print {
             .toolbar, .app-header-actions, .task-actions, .sidebar { display: none !important; }
@@ -7318,7 +7398,7 @@
                     <div class="form-group" id="habitTargetGroup" style="display: none;">
                         <label>Meta diaria</label>
                         <div style="display: flex; gap: 8px;">
-                            <input type="number" id="habitTarget" min="1" value="8" style="flex: 1; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);">
+                            <input type="number" step="any" id="habitTarget" min="0.1" value="8" style="flex: 1; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);">
                             <input type="text" id="habitUnit" placeholder="vasos, min, páginas..." maxlength="20" style="flex: 1; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);">
                         </div>
                     </div>
@@ -13894,6 +13974,17 @@
     }
 
     /* === Acceso a logs === */
+    /* v40: cantidades decimales — parseo (acepta coma o punto) y formato limpio */
+    function parseQty(v) {
+        const n = parseFloat(String(v).replace(',', '.'));
+        if (isNaN(n)) return 0;
+        return Math.round(n * 100) / 100; // máx 2 decimales
+    }
+    function fmtQty(n) {
+        if (typeof n !== 'number') return n;
+        return String(parseFloat(n.toFixed(2)));
+    }
+
     function getLog(habitId, dateKey) {
         if (!state.habitLogs[habitId]) return null;
         return state.habitLogs[habitId][dateKey] || null;
@@ -14588,7 +14679,7 @@
                     title += `: Cumplido${h.type === 'quantity' && typeof log === 'number' ? ` (${log}${h.unit || ''})` : ''}`;
                 } else if (partial) {
                     cls += ' partial';
-                    label = typeof log === 'number' ? String(log) : '~';
+                    label = typeof log === 'number' ? fmtQty(log) : '~';
                     title += `: Parcial (${log}/${h.target}${h.unit || ''})`;
                 } else {
                     label = '·';
@@ -14629,12 +14720,15 @@
             const wasDone = current === true;
             setLog(habitId, dateKey, wasDone ? null : true);
         } else {
-            // Cuantitativo: toggle entre 0 y target
-            if (typeof current === 'number' && current >= h.target) {
-                setLog(habitId, dateKey, null);
-            } else {
-                setLog(habitId, dateKey, h.target);
-            }
+            // v39: Cuantitativo — preguntar la cantidad exacta (antes solo alternaba 0↔meta)
+            const currentNum = typeof current === 'number' ? current : 0;
+            const input = prompt(
+                `${h.emoji || ''} ${h.name} — ${dateKey}\nCantidad (${h.unit || 'unidades'}), meta: ${h.target}.\nEscribe 0 para borrar el registro:`,
+                currentNum > 0 ? currentNum : h.target
+            );
+            if (input === null) return; // canceló
+            const num = Math.max(0, parseQty(input)); // v40: decimales OK
+            setLog(habitId, dateKey, num === 0 ? null : num);
         }
         saveToStorage();
         renderHabits();
@@ -14707,20 +14801,38 @@
                     </button>
                 `;
             } else {
-                // Cuantitativo: solo input manual + label de meta
+                // Cuantitativo: input manual + label de meta + chips de acumulación (v39)
                 const currentVal = typeof todayLog === 'number' ? todayLog : 0;
                 const pctOfTarget = h.target > 0 ? Math.min(100, Math.round((currentVal / h.target) * 100)) : 0;
+                // Detectar si la unidad es de tiempo → chips de minutos
+                const isTimeUnit = /min|hora|hr/i.test(h.unit || '');
+                const chips = isTimeUnit ? [5, 15, 30, 60] : [1, 5, 10];
+                const chipsHTML = chips.map(n =>
+                    `<button class="habit-add-chip" onclick="event.stopPropagation(); addHabitQuantity('${h.id}', ${n})">+${n}</button>`
+                ).join('');
                 markButton = `
-                    <div style="flex: 1; display: flex; gap: 8px; align-items: stretch;">
-                        <input type="number" min="0" max="9999" class="habit-mark-input habit-mark-input-lg"
-                            value="${currentVal}"
-                            placeholder="0"
-                            onclick="event.stopPropagation()"
-                            onchange="event.stopPropagation(); setHabitQuantity('${h.id}', this.value)"
-                            title="Escribe la cantidad de hoy">
-                        <div class="habit-target-display ${done ? 'achieved' : ''}" title="Meta diaria">
-                            <span class="target-pct">${pctOfTarget}%</span>
-                            <span class="target-meta">de ${h.target} ${escapeHTML(h.unit || '')}</span>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; gap: 8px; align-items: stretch;">
+                            <input type="number" min="0" max="9999" step="any" class="habit-mark-input habit-mark-input-lg"
+                                value="${currentVal}"
+                                placeholder="0"
+                                onclick="event.stopPropagation()"
+                                onchange="event.stopPropagation(); setHabitQuantity('${h.id}', this.value)"
+                                title="Total del día (editable, acepta decimales). O usa los botones + para acumular">
+                            <div class="habit-target-display ${done ? 'achieved' : ''}" title="Meta diaria">
+                                <span class="target-pct">${pctOfTarget}%</span>
+                                <span class="target-meta">de ${fmtQty(h.target)} ${escapeHTML(h.unit || '')}</span>
+                            </div>
+                        </div>
+                        <div class="habit-quick-add" onclick="event.stopPropagation()" title="Acumular ${isTimeUnit ? 'minutos' : 'unidades'} — registra en varios momentos del día">
+                            ${chipsHTML}
+                            <span class="habit-custom-wrap">
+                                <input type="text" inputmode="decimal" class="habit-custom-input" placeholder="otra…"
+                                    onclick="event.stopPropagation()"
+                                    onkeydown="if(event.key==='Enter'){event.preventDefault(); addHabitQuantityCustom('${h.id}', this);}">
+                                <button class="habit-add-chip habit-chip-go" onclick="event.stopPropagation(); addHabitQuantityCustom('${h.id}', this.previousElementSibling)" title="Sumar la cantidad escrita (acepta decimales y negativos para corregir)">＋</button>
+                            </span>
+                            <span class="habit-progress-mini"><span class="hpm-fill ${done ? 'done' : ''}" style="width: ${pctOfTarget}%;"></span></span>
                         </div>
                     </div>
                 `;
@@ -14817,10 +14929,53 @@
         renderHabitsPlanner();
     }
 
+    /* v39: ACUMULAR cantidad — para hábitos que se cumplen en varios
+       momentos del día (ej: +15 min de lectura ahora, +30 min después) */
+    function addHabitQuantity(habitId, amount) {
+        const h = state.habits.find(x => x.id === habitId);
+        if (!h || h.type !== 'quantity') return;
+        const today = todayKey();
+        const current = typeof getLog(habitId, today) === 'number' ? getLog(habitId, today) : 0;
+        const wasDone = isHabitDone(h, today);
+        const newVal = Math.max(0, Math.round((current + amount) * 100) / 100); // v40: decimales sin errores de redondeo
+        setLog(habitId, today, newVal);
+        const nowDone = isHabitDone(h, today);
+        if (!wasDone && nowDone) checkMilestoneAchievement(h);
+        saveToStorage();
+        renderHabits();
+        renderHabitsDashboard();
+        renderHabitsPlanner();
+        const target = h.target || 1;
+        const pct = Math.min(100, Math.round((newVal / target) * 100));
+        const unit = h.unit || '';
+        if (!wasDone && nowDone) {
+            showToast('success', '🎉 ¡Meta del día cumplida!', `${h.emoji || ''} ${h.name}: ${fmtQty(newVal)}/${fmtQty(target)} ${unit}`.trim());
+        } else {
+            const verb = amount >= 0 ? `+${fmtQty(amount)} ${unit} acumulado` : `${fmtQty(amount)} ${unit} corregido`;
+            showToast('success', verb.trim(), `${h.emoji || ''} ${h.name}: ${fmtQty(newVal)}/${fmtQty(target)} ${unit} (${pct}%)`.trim());
+        }
+    }
+
+    /* v40: sumar una cantidad libre escrita por el usuario (decimales OK,
+       negativos permitidos para corregir un registro de más) */
+    function addHabitQuantityCustom(habitId, inputEl) {
+        if (!inputEl) return;
+        const raw = String(inputEl.value).trim();
+        if (!raw) { inputEl.focus(); return; }
+        const amount = parseQty(raw);
+        if (amount === 0) {
+            showToast('warning', 'Cantidad no válida', 'Escribe un número, por ejemplo: 12, 1.5 o -10 para corregir.');
+            inputEl.focus();
+            return;
+        }
+        inputEl.value = '';
+        addHabitQuantity(habitId, amount);
+    }
+
     function setHabitQuantity(habitId, value) {
         const h = state.habits.find(x => x.id === habitId);
         if (!h) return;
-        const num = Math.max(0, parseInt(value, 10) || 0);
+        const num = Math.max(0, parseQty(value)); // v40: decimales OK
         const wasDone = isHabitDone(h, todayKey());
         setLog(habitId, todayKey(), num);
         if (!wasDone && isHabitDone(h, todayKey())) {
@@ -14956,7 +15111,7 @@
         }
 
         const type = $('#habitType').value;
-        const target = type === 'quantity' ? Math.max(1, parseInt($('#habitTarget').value, 10) || 1) : null;
+        const target = type === 'quantity' ? Math.max(0.1, parseQty($('#habitTarget').value) || 1) : null;
         const unit = type === 'quantity' ? $('#habitUnit').value.trim() : null;
 
         if (state.editingHabitId) {
@@ -16414,7 +16569,7 @@
         setModule, openHabitModal, closeHabitModal, toggleHabitTargetField, saveHabit,
         confirmDeleteHabit, toggleArchiveHabit, selectHabitEmoji, selectHabitColor,
         openHabitDetail, closeHabitDetailModal, editHabitFromDetail,
-        toggleHabitToday, incrementHabit, setHabitQuantity, markHabitSkip,
+        toggleHabitToday, incrementHabit, setHabitQuantity, markHabitSkip, addHabitQuantity, addHabitQuantityCustom,
         exportHabitsReport, renderHabits, renderHabitsDashboard,
         // v24+ — Gráfico
         renderHabitsChart, toggleChartHabit, toggleChartAverage,
